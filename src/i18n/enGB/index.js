@@ -1,6 +1,3 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
   app: {
     name: 'tailoring.io',
@@ -11,6 +8,7 @@ export default {
     email: 'Email address',
     password: 'Password',
     rememberMe: 'Use cookies and keep me logged in',
-    submitForm: 'Login!'
+    submitForm: 'Login',
+    invalidInput: 'Please provide your email and password'
   }
 }

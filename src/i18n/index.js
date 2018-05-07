@@ -1,5 +1,5 @@
-import en from './en'
+import enGB from './enGB'
 
 export default {
-  en
+  enGB
 }
