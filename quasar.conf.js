@@ -5,8 +5,8 @@ module.exports = function (ctx) {
   return {
     // app plugins (/src/plugins)
     plugins: [
-      'i18n',
       'axios',
+      'i18n',
       'vuelidate'
     ],
     css: [
@@ -49,6 +49,7 @@ module.exports = function (ctx) {
     // framework: 'all' --- includes everything; for dev only!
     framework: {
       components: [
+        'QAlert',
         'QBtn',
         'QCard',
         'QCardActions',
@@ -78,7 +79,6 @@ module.exports = function (ctx) {
       ],
       // Quasar plugins
       plugins: [
-        'AddressbarColor',
         'Notify'
       ]
     },

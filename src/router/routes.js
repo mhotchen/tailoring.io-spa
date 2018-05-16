@@ -4,8 +4,8 @@ export default [
     path: '/',
     component: () => import('layouts/default'),
     children: [
-      { path: '', component: () => import('pages/index') },
-      { path: '/register', component: () => import('pages/register') }
+      { path: '', name: 'login', component: () => import('pages/index') },
+      { path: '/register', name: 'register', component: () => import('pages/register') }
     ]
   },
 

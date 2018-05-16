@@ -1,21 +1,26 @@
 <template>
   <q-page>
-    <q-card>
+    <q-card flat>
       <q-card-title>{{ $t('login.formTitle') }}</q-card-title>
       <q-card-separator />
       <q-card-main>
-        <div class="row">
+        <q-field>
           <q-input class="full-width" :float-label="$t('login.email')" type="email" v-model="form.email" />
-        </div>
-        <div class="row q-mt-md">
+        </q-field>
+        <q-field class="q-mt-md">
           <q-input class="full-width" :float-label="$t('login.password')" type="password" v-model="form.password" />
-        </div>
-        <div class="row q-mt-md">
+        </q-field>
+        <q-field class="q-mt-md">
           <q-toggle class="full-width" :label="$t('login.rememberMe')" v-model="form.rememberMe" />
-        </div>
-        <div class="row q-mt-md">
+        </q-field>
+        <q-field class="q-mt-md">
           <q-btn class="full-width" color="primary" :label="$t('login.submitForm')" @click="submit" />
-        </div>
+        </q-field>
+        <q-field class="q-mt-md">
+          <i18n class="q-subheading" tag="p" path="login.createAccount.noAccount">
+            <router-link class="text-no-wrap" place="startTrialLink" :to="{ name: 'register' }">{{ $t('login.createAccount.createAccount') }}</router-link>
+          </i18n>
+        </q-field>
       </q-card-main>
     </q-card>
   </q-page>

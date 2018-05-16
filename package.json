@@ -1,10 +1,10 @@
 {
-  "name": "spa",
+  "name": "top/spa",
   "version": "1.0.0",
-  "description": "Dead simple software for tailors.",
+  "description": "SPA for the Tailoring Online Platform",
   "productName": "tailoring.io",
   "cordovaId": "org.cordova.quasar.app",
-  "author": "Matthew Hotchen <m@mhn.me>",
+  "author": "Matthew Hotchen <mhotchen@tailoring.io>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
