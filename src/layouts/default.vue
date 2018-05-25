@@ -30,49 +30,46 @@
         no-border
         link
         inset-delimiter
+        v-if="isLoggedIn"
       >
-        <q-list-header>Essential Links</q-list-header>
-        <q-item @click.native="openURL('http://quasar-framework.org')">
-          <q-item-side icon="school" />
-          <q-item-main label="Docs" sublabel="quasar-framework.org" />
+        <q-list-header>{{ $t('app.mainDrawer.accountListHeader') }}</q-list-header>
+        <q-item @click.native="$router.push({ name: 'account' })">
+          <q-item-side icon="account_box" />
+          <q-item-main
+            :label="$t('app.mainDrawer.accountSettings')"
+            :sublabel="$t('app.mainDrawer.accountSettingsSub')"
+          />
         </q-item>
-        <q-item @click.native="openURL('https://github.com/quasarframework/')">
-          <q-item-side icon="code" />
-          <q-item-main label="GitHub" sublabel="github.com/quasarframework" />
-        </q-item>
-        <q-item @click.native="openURL('https://discord.gg/5TDhbDg')">
-          <q-item-side icon="chat" />
-          <q-item-main label="Discord Chat Channel" sublabel="https://discord.gg/5TDhbDg" />
-        </q-item>
-        <q-item @click.native="openURL('http://forum.quasar-framework.org')">
-          <q-item-side icon="record_voice_over" />
-          <q-item-main label="Forum" sublabel="forum.quasar-framework.org" />
-        </q-item>
-        <q-item @click.native="openURL('https://twitter.com/quasarframework')">
-          <q-item-side icon="rss feed" />
-          <q-item-main label="Twitter" sublabel="@quasarframework" />
+        <q-item @click.native="$router.push({ name: 'logout' })">
+          <q-item-side icon="exit_to_app" />
+          <q-item-main :label="$t('app.mainDrawer.logout')" />
         </q-item>
       </q-list>
     </q-layout-drawer>
 
     <q-page-container>
+      <q-alert v-if="isAwaitingPasswordReset()" color="warning" icon="warning" class="q-mt-md">
+        {{ $t('account.awaitingPasswordReset') }}
+      </q-alert>
+      <q-alert v-if="isAwaitingEmailVerification()" color="warning" icon="warning" class="q-mt-md">
+        {{ $t('account.awaitingEmailVerification') }}
+      </q-alert>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: 'LayoutDefault',
   data () {
     return {
       leftDrawerOpen: false
     }
   },
   methods: {
-    openURL
+    ...mapGetters('user', ['isLoggedIn', 'get', 'isAwaitingEmailVerification', 'isAwaitingPasswordReset'])
   }
 }
 </script>

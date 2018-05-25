@@ -79,7 +79,9 @@ module.exports = function (ctx) {
       ],
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Cookies',
+        'Notify',
+        'SessionStorage'
       ]
     },
     // animations: 'all' --- includes all animations

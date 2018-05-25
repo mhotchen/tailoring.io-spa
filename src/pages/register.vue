@@ -62,7 +62,6 @@ const MIN_PASSWORD_LENGTH = 8
 import { required, email, minLength } from 'vuelidate/lib/validators'
 
 export default {
-  name: 'PageRegistration',
   data () {
     return {
       complete: false,
@@ -86,6 +85,11 @@ export default {
       }
     }
   },
+  created () {
+    if (this.$store.getters['user/isLoggedIn']) {
+      this.$router.replace({name: 'index'})
+    }
+  },
   computed: {
     passwordLength: () => MIN_PASSWORD_LENGTH
   },
@@ -107,13 +111,10 @@ export default {
   },
   methods: {
     submit () {
+      this.resetErrors()
       this.$v.form.$touch()
       if (this.$v.form.$error) {
         return
-      }
-
-      for (let v in this.errors) {
-        this.errors[v] = []
       }
 
       this.$axios
@@ -143,6 +144,11 @@ export default {
     },
     errorLabel: function (key) {
       return this.errors[key].reduce((message, error) => message + '\n' + this.$t(error), '')
+    },
+    resetErrors: function () {
+      for (let v in this.errors) {
+        this.errors[v] = []
+      }
     }
   }
 }
