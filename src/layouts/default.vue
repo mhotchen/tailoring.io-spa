@@ -30,7 +30,7 @@
         no-border
         link
         inset-delimiter
-        v-if="isLoggedIn"
+        v-if="userIsLoggedIn"
       >
         <q-list-header>{{ $t('app.mainDrawer.accountListHeader') }}</q-list-header>
         <q-item @click.native="$router.push({ name: 'account' })">
@@ -48,10 +48,10 @@
     </q-layout-drawer>
 
     <q-page-container>
-      <q-alert v-if="isAwaitingPasswordReset()" color="warning" icon="warning" class="q-mt-md">
+      <q-alert v-if="userIsAwaitingPasswordReset" color="warning" icon="warning" class="q-mt-md">
         {{ $t('account.awaitingPasswordReset') }}
       </q-alert>
-      <q-alert v-if="isAwaitingEmailVerification()" color="warning" icon="warning" class="q-mt-md">
+      <q-alert v-if="userIsAwaitingEmailVerification" color="warning" icon="warning" class="q-mt-md">
         {{ $t('account.awaitingEmailVerification') }}
       </q-alert>
       <router-view />
@@ -68,9 +68,7 @@ export default {
       leftDrawerOpen: false
     }
   },
-  methods: {
-    ...mapGetters('user', ['isLoggedIn', 'get', 'isAwaitingEmailVerification', 'isAwaitingPasswordReset'])
-  }
+  computed: mapGetters('user', ['userIsLoggedIn', 'userIsAwaitingEmailVerification', 'userIsAwaitingPasswordReset'])
 }
 </script>
 

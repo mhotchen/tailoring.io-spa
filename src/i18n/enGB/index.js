@@ -10,7 +10,27 @@ export default {
     }
   },
   index: {
-    title: '{company} dashboard'
+    title: '{company} dashboard',
+    customers: {
+      heading: 'Your customers',
+      addNew: 'New customer',
+      search: 'Find customers'
+    }
+  },
+  customer: {
+    edit: {
+      formTitleEdit: 'Edit customer {name}',
+      formTitleNew: 'New customer',
+      name: 'Customer name',
+      email: 'Optional email address',
+      telephone: 'Optional telephone number',
+      notes: {
+        heading: 'Notes',
+        note: 'Add a note',
+        addNote: 'Add another'
+      },
+      submitForm: 'Save'
+    }
   },
   account: {
     awaitingEmailVerification: "Your email isn't yet verified and until it is you won't be able to create customers, orders, etc.",
@@ -20,7 +40,7 @@ export default {
     formTitle: 'Login',
     email: 'Email address',
     password: 'Password',
-    rememberMe: 'Use cookies to keep me logged in',
+    rememberMe: 'Use a cookie to keep me logged in',
     submitForm: 'Login',
     invalidInput: 'Please provide your email address and password',
     createAccount: {
@@ -35,7 +55,7 @@ export default {
     emailHelper: 'We use your email to verify your account, for logging in, for password resets and a single email to inform you that your free trial will expire in five days.',
     password: 'Password',
     passwordHelper: 'Minimum of {passwordLength} characters. Try using a sentence instead of a word.',
-    rememberMe: 'Use cookies and keep me logged in',
+    rememberMe: 'Use a cookie to keep me logged in',
     submitForm: 'Create account',
     invalidInput: 'Please provide your email and password',
     verifyEmail: 'A verification email has been sent to your inbox. Follow the instructions in that email to continue.'
@@ -43,7 +63,7 @@ export default {
   verify: {
     formTitle: 'Verify your email address',
     password: 'Password',
-    rememberMe: 'Use cookies to keep me logged in',
+    rememberMe: 'Use a cookie to keep me logged in',
     invalidInput: 'Please provide your password',
     invalidIdInUrl: 'The URL is invalid. Have you already verified your email address?',
     submitForm: 'Verify and login'
@@ -61,7 +81,8 @@ export default {
     },
     password: {
       length: 'Your password is too short',
-      invalid: 'Invalid email or password'
+      invalid: 'Invalid password',
+      invalid_email_or_password: 'Invalid email or password'
     },
     verify: {
       code_invalid: 'Either this verification code has expired or your password is invalid.'

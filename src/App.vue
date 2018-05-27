@@ -6,18 +6,49 @@
 </template>
 
 <script>
+import { mapGetters, mapActions, mapMutations } from 'vuex'
+
 export default {
   created () {
-    let user = null
+    this.loadAccessTokenFromStorage()
+  },
+  computed: {
+    ...mapGetters('accessToken', ['isAccessTokenSet', 'accessToken']),
+    ...mapGetters('user', ['userIsLoading', 'userIsLoggedIn'])
+  },
+  watch: {
+    async isAccessTokenSet (newValue, oldValue) {
+      if (!newValue) {
+        this.logout()
+        return
+      }
 
-    if (this.$q.cookies.has('user')) {
-      user = this.$q.cookies.get('user')
-    } else if (this.$q.sessionStorage.has('user')) {
-      user = this.$q.sessionStorage.get.item('user')
+      this.$axios.defaults.headers.common['Authorization'] = `Bearer ${this.accessToken}`
+
+      /*
+       * The login/email verification/password reset endpoints return the user themselves so check if the user is
+       * already logged in to save a HTTP request.
+       */
+
+      if (!this.userIsLoggedIn) {
+        try {
+          await this.loadUser(this.$axios.get('/users/me'))
+        } catch (error) {
+          // The stored token is probably invalid so clear state/log user out.
+          this.setAccessToken(null)
+        }
+      }
     }
-
-    if (!this.$store.getters['user/isLoggedIn'] && user) {
-      this.$store.commit('user/set', user)
+  },
+  methods: {
+    ...mapActions('accessToken', ['loadAccessTokenFromStorage', 'clearAccessTokenFromStorage']),
+    ...mapMutations('accessToken', ['setAccessToken']),
+    ...mapActions('user', ['loadUser']),
+    ...mapMutations('user', ['unsetUser']),
+    logout () {
+      this.$axios.defaults.headers.common['Authorization'] = null
+      this.unsetUser()
+      this.clearAccessTokenFromStorage()
     }
   }
 }

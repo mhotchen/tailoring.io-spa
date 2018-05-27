@@ -8,8 +8,10 @@
           <q-field
             :error="hasErrors('data.name', $v.form.data.name.$error)"
             :error-label="errorLabel('data.name')"
+            class="q-mb-md"
           >
             <q-input
+              autofocus
               :float-label="$t('register.companyName')"
               type="text"
               v-model="form.data.name"
@@ -17,11 +19,11 @@
           </q-field>
           <template v-for="(user, i) in form.data.users">
             <q-field
-              class="q-mt-md"
               :key="'email' + i"
               :helper="$t('register.emailHelper')"
               :error="hasErrors(`data.users.${i}.data.email`, $v.form.data.users.$each[i].data.email.$error)"
               :error-label="errorLabel(`data.users.${i}.data.email`)"
+              class="q-mb-md"
             >
               <q-input
                 class="full-width"
@@ -31,11 +33,11 @@
               />
             </q-field>
             <q-field
-              class="q-mt-md"
               :key="'password' + i"
               :helper="$t('register.passwordHelper', { passwordLength })"
               :error="hasErrors(`data.users.${i}.data.password`, $v.form.data.users.$each[i].data.password.$error)"
               :error-label="errorLabel(`data.users.${i}.data.password`)"
+              class="q-mb-md"
             >
               <q-input
                 class="full-width"
@@ -45,7 +47,7 @@
               />
             </q-field>
           </template>
-          <q-field v-if="!complete" class="q-mt-md">
+          <q-field v-if="!complete" class="q-mb-md">
             <q-btn class="full-width" color="primary" :label="$t('register.submitForm')" />
           </q-field>
         </form>
@@ -60,6 +62,7 @@
 <script>
 const MIN_PASSWORD_LENGTH = 8
 import { required, email, minLength } from 'vuelidate/lib/validators'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -85,56 +88,63 @@ export default {
       }
     }
   },
-  created () {
-    if (this.$store.getters['user/isLoggedIn']) {
-      this.$router.replace({name: 'index'})
-    }
-  },
-  computed: {
-    passwordLength: () => MIN_PASSWORD_LENGTH
-  },
   validations: {
     form: {
       data: {
-        name: {required},
+        name: { required },
         users: {
           required,
           $each: {
             data: {
-              email: {required, email},
-              password: {required, minLength: minLength(MIN_PASSWORD_LENGTH)}
+              email: { required, email },
+              password: { required, minLength: minLength(MIN_PASSWORD_LENGTH) }
             }
           }
         }
       }
     }
   },
+  computed: {
+    ...mapGetters('user', ['userIsLoading', 'userIsLoggedIn']),
+    passwordLength: () => MIN_PASSWORD_LENGTH
+  },
+  created () {
+    if (this.userIsLoading || this.userIsLoggedIn) {
+      this.$router.replace({ name: 'index' })
+    }
+  },
+  watch: {
+    userIsLoggedIn (newValue, oldValue) {
+      if (newValue) {
+        this.$router.replace({ name: 'index' })
+      }
+    }
+  },
   methods: {
-    submit () {
+    async submit () {
       this.resetErrors()
       this.$v.form.$touch()
       if (this.$v.form.$error) {
         return
       }
 
-      this.$axios
-        .post('/companies', this.form)
-        .then(response => {
-          this.complete = true
-          this.$q.notify({
-            message: this.$t('register.verifyEmail'),
-            timeout: 0,
-            type: 'positive'
-          })
+      try {
+        await this.$axios.post('/companies', this.form)
+        this.complete = true
+        this.$q.notify({
+          message: this.$t('register.verifyEmail'),
+          timeout: 0,
+          type: 'positive'
         })
-        .catch(error => {
-          switch (error.response.status) {
-            case 422:
-              this.errors = {...this.errors, ...error.response.data.errors}
-              break
-            default:
-          }
-        })
+      } catch (error) {
+        switch (error.response.status) {
+          case 422:
+            this.errors = {...this.errors, ...error.response.data.errors}
+            break
+          default:
+            throw error
+        }
+      }
     },
     // I tried plugins and shit for this but the vue documentation is crap and I couldn't figure out how to access
     // 'this' whatever 'this' is...

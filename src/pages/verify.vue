@@ -11,18 +11,20 @@
           <q-field
             :error="hasErrors('data.password', $v.form.data.password.$error)"
             :error-label="errorLabel('data.password')"
+            class="q-mb-md"
           >
             <q-input
+              autofocus
               class="full-width"
               :float-label="$t('verify.password')"
               type="password"
               v-model="form.data.password"
             />
           </q-field>
-          <q-field class="q-mt-md">
+          <q-field class="q-mb-md">
             <q-toggle class="full-width" :label="$t('verify.rememberMe')" v-model="rememberMe" />
           </q-field>
-          <q-field v-if="!complete" class="q-mt-md">
+          <q-field v-if="!complete" class="q-mb-md">
             <q-btn class="full-width" color="primary" :label="$t('verify.submitForm')" />
           </q-field>
         </form>
@@ -36,6 +38,7 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   data () {
@@ -54,11 +57,6 @@ export default {
       }
     }
   },
-  created () {
-    if (this.$store.getters['user/isLoggedIn']) {
-      this.$router.replace({name: 'index'})
-    }
-  },
   validations: {
     form: {
       data: {
@@ -67,8 +65,24 @@ export default {
       }
     }
   },
+  computed: mapGetters('user', ['userIsLoading', 'userIsLoggedIn']),
+  created () {
+    if (this.userIsLoading || this.userIsLoggedIn) {
+      this.$router.replace({ name: 'index' })
+    }
+  },
+  watch: {
+    userIsLoggedIn (newValue, oldValue) {
+      if (newValue) {
+        this.$router.replace({ name: 'index' })
+      }
+    }
+  },
   methods: {
-    submit () {
+    ...mapActions('user', ['loadUser']),
+    ...mapActions('accessToken', ['storeAccessTokenInStorage']),
+    ...mapMutations('accessToken', ['setAccessToken']),
+    async submit () {
       this.resetErrors()
       this.$v.form.$touch()
       if (this.$v.form.$error) {
@@ -76,27 +90,20 @@ export default {
         return
       }
 
-      this.$axios
-        .post('/users/verifications', this.form)
-        .then((response) => {
-          this.complete = true
-          this.$store.dispatch({
-            type: 'user/store',
-            user: response.data.data,
-            useCookie: this.rememberMe
-          })
-
-          this.$router.push({ name: 'index' })
-        })
-        .catch(error => {
-          switch (error.response.status) {
-            case 422:
-              this.errors = {...this.errors, ...error.response.data.errors}
-              break
-            default:
-              throw error
-          }
-        })
+      try {
+        let request = this.$axios.post('/users/verifications', this.form)
+        await this.loadUser(request)
+        this.setAccessToken((await request).data.meta.jwt.access_token)
+        this.storeAccessTokenInStorage(this.rememberMe)
+      } catch (error) {
+        switch (error.response.status) {
+          case 422:
+            this.errors = {...this.errors, ...error.response.data.errors}
+            break
+          default:
+            throw error
+        }
+      }
     },
     // I tried plugins and shit for this but the vue documentation is crap and I couldn't figure out how to access
     // 'this' whatever 'this' is...

@@ -1,7 +1,9 @@
 export default {
-  id: null,
-  email: null,
-  status: null,
-  access_token: null,
-  companies: []
+  user: {
+    id: null,
+    email: null,
+    status: null,
+    companies: []
+  },
+  isLoading: false
 }

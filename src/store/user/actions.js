@@ -1,11 +1,8 @@
-import { Cookies, SessionStorage } from 'quasar'
-
-export const store = ({ commit, state }, { user, useCookie }) => {
-  if (useCookie) {
-    Cookies.set('user', user, { expires: 30, path: '/' })
+export const loadUser = async ({ commit }, apiPromise) => {
+  commit('setUserIsLoading', true)
+  try {
+    commit('setUser', (await apiPromise).data.data)
+  } finally {
+    commit('setUserIsLoading', false)
   }
-
-  SessionStorage.set('user', user)
-
-  commit('set', user)
 }
