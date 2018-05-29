@@ -1,5 +1,5 @@
-<template>
-  <q-page v-if="userIsLoaded && userIsActive">
+<template v-if="userIsActive">
+  <q-page>
     <q-card flat>
       <q-card-title>{{ $t('index.title', { company: userCompanyName }) }}</q-card-title>
       <q-card-separator />
@@ -46,13 +46,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   created () {
-    if (!this.userIsLoading && !this.userIsLoaded) {
+    if (!this.userIsLoading && !this.userIsActive) {
       this.$router.replace({ name: 'login' })
     }
   },
   watch: {
-    userIsLoading (oldValue, newValue) {
-      if (!newValue && !this.userIsLoaded) {
+    userIsActive (newValue, oldValue) {
+      if (!newValue) {
         this.$router.replace({ name: 'login' })
       }
     }
@@ -62,6 +62,6 @@ export default {
       search: ''
     }
   },
-  computed: mapGetters('user', ['userIsLoaded', 'userIsLoading', 'userIsActive', 'userCompanyName'])
+  computed: mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyName'])
 }
 </script>

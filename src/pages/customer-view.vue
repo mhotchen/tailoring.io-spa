@@ -1,4 +1,4 @@
-<template>
+<template v-if="userIsActive">
   <q-page>
     <q-card flat v-if="loaded">
       <q-card-title>
@@ -95,16 +95,16 @@ export default {
     }
   },
   created () {
-    if (!this.userIsLoading && !this.userIsLoaded) {
+    if (!this.userIsLoading && !this.userIsActive) {
       this.$router.replace({ name: 'login' })
     }
 
-    if (this.userIsLoaded) {
+    if (this.userIsActive) {
       this.load()
     }
   },
   watch: {
-    userIsLoaded (newValue, oldValue) {
+    userIsActive (newValue, oldValue) {
       if (!newValue) {
         this.$router.replace({ name: 'login' })
         return
@@ -115,7 +115,7 @@ export default {
   },
   computed: {
     ...mapGetters('accessToken', ['isAccessTokenSet']),
-    ...mapGetters('user', ['userIsLoaded', 'userIsLoading', 'userCompanyId']),
+    ...mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyId']),
 
     // mapGetters, mapActions, etc. don't work with dynamic modules
     getCustomerName () { return this.$store.getters[`customer-${this.id}/getCustomerName`] },

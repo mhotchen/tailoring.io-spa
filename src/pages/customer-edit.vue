@@ -1,4 +1,4 @@
-<template>
+<template v-if="userIsActive">
   <q-page>
     <q-card flat>
       <q-card-title>
@@ -99,7 +99,6 @@ export default {
       complete: false,
       form: {
         data: {
-          id: this.$route.params.id || null,
           name: '',
           email: null,
           telephone: null,
@@ -131,19 +130,19 @@ export default {
     }
   },
   created () {
-    if (!this.userIsLoading && !this.userIsLoaded) {
+    if (!this.userIsLoading && !this.userIsActive) {
       this.$router.replace({ name: 'login' })
     }
   },
   watch: {
-    userIsLoaded (newValue, oldValue) {
+    userIsActive (newValue, oldValue) {
       if (!newValue) {
         this.$router.replace({ name: 'login' })
       }
     }
   },
   computed: {
-    ...mapGetters('user', ['userIsLoaded', 'userIsLoading', 'userCompanyId']),
+    ...mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyId']),
     ...mapGetters('accessToken', ['isAccessTokenSet'])
   },
   methods: {
