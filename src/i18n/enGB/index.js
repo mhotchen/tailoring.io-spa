@@ -13,11 +13,24 @@ export default {
     title: '{company} dashboard',
     customers: {
       heading: 'Your customers',
-      addNew: 'New customer',
       search: 'Find customers'
     }
   },
   customer: {
+    view: {
+      edit: 'Edit customer',
+      contact: {
+        heading: 'Contact {name}'
+      },
+      notes: {
+        heading: 'Notes'
+      },
+      orders: {
+        heading: 'Orders',
+        none: 'No orders yet!',
+        new: 'Create a new order'
+      }
+    },
     edit: {
       formTitleEdit: 'Edit customer {name}',
       formTitleNew: 'New customer',

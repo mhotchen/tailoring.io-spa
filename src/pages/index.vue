@@ -1,10 +1,10 @@
 <template>
-  <q-page>
+  <q-page v-if="userIsLoaded && userIsActive">
     <q-card flat>
       <q-card-title>{{ $t('index.title', { company: userCompanyName }) }}</q-card-title>
       <q-card-separator />
       <q-card-main>
-        <div class="row" v-if="userIsActive">
+        <div class="row">
           <q-card inline class="col-md-auto q-mr-md q-mb-md">
             <q-card-title>
               {{ $t('index.customers.heading') }}
@@ -12,6 +12,7 @@
                 @click="$router.push({ name: 'customer-new' })"
                 color="primary"
                 slot="right"
+                dense
                 round
                 icon="person_add"
               />
@@ -25,7 +26,6 @@
           <q-card inline class="col-md-auto q-mr-md q-mb-md">
             <q-card-title>
               {{ $t('index.customers.heading') }}
-              <q-btn color="primary" slot="right" round icon="person_add" />
             </q-card-title>
             <q-card-separator />
             <q-card-main>
@@ -46,13 +46,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   created () {
-    if (!this.userIsLoading && !this.userIsLoggedIn) {
+    if (!this.userIsLoading && !this.userIsLoaded) {
       this.$router.replace({ name: 'login' })
     }
   },
   watch: {
     userIsLoading (oldValue, newValue) {
-      if (!newValue && !this.userIsLoggedIn) {
+      if (!newValue && !this.userIsLoaded) {
         this.$router.replace({ name: 'login' })
       }
     }
@@ -62,6 +62,6 @@ export default {
       search: ''
     }
   },
-  computed: mapGetters('user', ['userIsLoggedIn', 'userIsLoading', 'userIsActive', 'userCompanyName'])
+  computed: mapGetters('user', ['userIsLoaded', 'userIsLoading', 'userIsActive', 'userCompanyName'])
 }
 </script>

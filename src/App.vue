@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     ...mapGetters('accessToken', ['isAccessTokenSet', 'accessToken']),
-    ...mapGetters('user', ['userIsLoading', 'userIsLoggedIn'])
+    ...mapGetters('user', ['userIsLoading', 'userIsLoaded'])
   },
   watch: {
     async isAccessTokenSet (newValue, oldValue) {
@@ -30,7 +30,7 @@ export default {
        * already logged in to save a HTTP request.
        */
 
-      if (!this.userIsLoggedIn) {
+      if (!this.userIsLoaded) {
         try {
           await this.loadUser(this.$axios.get('/users/me'))
         } catch (error) {

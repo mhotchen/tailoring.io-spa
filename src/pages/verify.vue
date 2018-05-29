@@ -65,14 +65,14 @@ export default {
       }
     }
   },
-  computed: mapGetters('user', ['userIsLoading', 'userIsLoggedIn']),
+  computed: mapGetters('user', ['userIsLoading', 'userIsLoaded']),
   created () {
-    if (this.userIsLoading || this.userIsLoggedIn) {
+    if (this.userIsLoading || this.userIsLoaded) {
       this.$router.replace({ name: 'index' })
     }
   },
   watch: {
-    userIsLoggedIn (newValue, oldValue) {
+    userIsLoaded (newValue, oldValue) {
       if (newValue) {
         this.$router.replace({ name: 'index' })
       }

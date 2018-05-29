@@ -30,7 +30,7 @@
         no-border
         link
         inset-delimiter
-        v-if="userIsLoggedIn"
+        v-if="userIsLoaded"
       >
         <q-list-header>{{ $t('app.mainDrawer.accountListHeader') }}</q-list-header>
         <q-item @click.native="$router.push({ name: 'account' })">
@@ -68,7 +68,7 @@ export default {
       leftDrawerOpen: false
     }
   },
-  computed: mapGetters('user', ['userIsLoggedIn', 'userIsAwaitingEmailVerification', 'userIsAwaitingPasswordReset'])
+  computed: mapGetters('user', ['userIsLoaded', 'userIsAwaitingEmailVerification', 'userIsAwaitingPasswordReset'])
 }
 </script>
 
