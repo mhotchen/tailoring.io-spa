@@ -97,6 +97,7 @@ export default {
   data () {
     return {
       complete: false,
+      id: null,
       form: {
         data: {
           name: '',
@@ -133,12 +134,22 @@ export default {
     if (!this.userIsLoading && !this.userIsActive) {
       this.$router.replace({ name: 'login' })
     }
+
+    if ('id' in this.$route.params) {
+      this.id = this.$route.params.id
+      this.registerModule()
+      if (this.userIsActive) {
+        this.load()
+      }
+    }
   },
   watch: {
-    userIsActive (newValue, oldValue) {
-      if (!newValue) {
+    userIsLoading (newValue, oldValue) {
+      if (!newValue && !this.userIsActive) {
         this.$router.replace({ name: 'login' })
       }
+
+      this.load()
     }
   },
   computed: {
@@ -154,16 +165,17 @@ export default {
       }
 
       try {
-        let request = this.$axios.post(`/companies/${this.userCompanyId}/customers`, this.form)
-        let id = (await request).data.data.id
+        let request = this.id
+          ? this.$axios.put(`/companies/${this.userCompanyId}/customers/${this.id}`, this.form)
+          : this.$axios.post(`/companies/${this.userCompanyId}/customers`, this.form)
 
-        if (!(`customer-${id}` in this.$store._modules.root._children)) {
-          this.$store.registerModule(`customer-${id}`, customer)
-        }
+        this.id = (await request).data.data.id
 
-        await this.$store.dispatch(`customer-${id}/loadCustomer`, request)
+        this.registerModule()
 
-        this.$router.push({ name: 'customer-view', params: { id } })
+        await this.$store.dispatch(`customer-${this.id}/loadCustomer`, request)
+
+        this.$router.push({ name: 'customer-view', params: { id: this.id } })
       } catch (error) {
         if (!error.hasOwnProperty('response')) {
           throw error
@@ -178,6 +190,38 @@ export default {
         }
       }
     },
+    registerModule () {
+      if (!(`customer-${this.id}` in this.$store._modules.root._children)) {
+        this.$store.registerModule(`customer-${this.id}`, customer)
+      }
+    },
+    async load () {
+      try {
+        await this.$store.dispatch(
+          `customer-${this.id}/loadCustomer`,
+          this.$axios.get(`/companies/${this.userCompanyId}/customers/${this.id}`)
+        )
+        this.form = this.$store.getters[`customer-${this.id}/getCustomer`]
+        if (this.form.data.notes.length === 0) {
+          this.addNote()
+        }
+        this.registerNoteErrorKeys()
+      } catch (error) {
+        if (!('response' in error)) {
+          throw error
+        }
+
+        switch (error.response.status) {
+          case 403:
+          case 404:
+            this.$router.replace({ name: '404' })
+            break
+          default:
+            throw error
+        }
+      }
+      this.loaded = true
+    },
     removeNote (i) {
       // We don't need to remove the errors key in this situation.
       this.form.data.notes.splice(i, 1)
@@ -186,9 +230,15 @@ export default {
       }
     },
     addNote () {
-      let i = this.form.data.notes.length
-      this.form.data.notes.push({data: {note: null}})
-      if (!this.errors.hasOwnProperty(`data.notes.${i}.data.note`)) {
+      this.form.data.notes.push({ data: { note: null } })
+      this.registerNoteErrorKeys()
+    },
+    registerNoteErrorKeys () {
+      for (let i = 0; i < this.form.data.notes.length; ++i) {
+        if (`data.notes.${i}.data.note` in this.errors) {
+          continue
+        }
+
         this.errors[`data.notes.${i}.data.note`] = []
       }
     },

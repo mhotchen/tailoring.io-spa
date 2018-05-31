@@ -51,8 +51,8 @@ export default {
     }
   },
   watch: {
-    userIsActive (newValue, oldValue) {
-      if (!newValue) {
+    userIsLoading (newValue, oldValue) {
+      if (!newValue && !this.userIsActive) {
         this.$router.replace({ name: 'login' })
       }
     }
