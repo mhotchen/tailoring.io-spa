@@ -1,4 +1,5 @@
 export const getCustomer = (state) => state.loaded ? state.customer : {}
+export const getCustomerId = (state) => state.loaded ? state.customer.data.id : null
 export const getCustomerName = (state) => state.loaded ? state.customer.data.name : null
 export const getCustomerEmail = (state) => state.loaded ? state.customer.data.email : null
 export const getCustomerTelephone = (state) => state.loaded ? state.customer.data.telephone : null

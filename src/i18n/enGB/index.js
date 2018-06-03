@@ -13,7 +13,12 @@ export default {
     title: '{company} dashboard',
     customers: {
       heading: 'Your customers',
-      search: 'Find customers'
+      view: 'Customer profile',
+      order: 'New order',
+      search: 'Find customers',
+      searchResults: 'No search results | One search result | {count} search results',
+      recentlyUpdated: "You don't have any customers yet | You have one customer | {count} most recently updated customers",
+      total: "You don't have any customers yet | You have one customer | You have {total} customers"
     }
   },
   customer: {

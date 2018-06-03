@@ -4,53 +4,51 @@
       <q-card-title>{{ $t('register.formTitle') }}</q-card-title>
       <q-card-separator />
       <q-card-main>
-        <form @submit.prevent="submit">
+        <q-field
+          :error="hasErrors('data.name', $v.form.data.name.$error)"
+          :error-label="errorLabel('data.name')"
+          class="q-mb-md"
+        >
+          <q-input
+            autofocus
+            :float-label="$t('register.companyName')"
+            type="text"
+            v-model="form.data.name"
+          />
+        </q-field>
+        <template v-for="(user, i) in form.data.users">
           <q-field
-            :error="hasErrors('data.name', $v.form.data.name.$error)"
-            :error-label="errorLabel('data.name')"
+            :key="'email' + i"
+            :helper="$t('register.emailHelper')"
+            :error="hasErrors(`data.users.${i}.data.email`, $v.form.data.users.$each[i].data.email.$error)"
+            :error-label="errorLabel(`data.users.${i}.data.email`)"
             class="q-mb-md"
           >
             <q-input
-              autofocus
-              :float-label="$t('register.companyName')"
-              type="text"
-              v-model="form.data.name"
+              class="full-width"
+              :float-label="$t('register.email')"
+              type="email"
+              v-model="user.data.email"
             />
           </q-field>
-          <template v-for="(user, i) in form.data.users">
-            <q-field
-              :key="'email' + i"
-              :helper="$t('register.emailHelper')"
-              :error="hasErrors(`data.users.${i}.data.email`, $v.form.data.users.$each[i].data.email.$error)"
-              :error-label="errorLabel(`data.users.${i}.data.email`)"
-              class="q-mb-md"
-            >
-              <q-input
-                class="full-width"
-                :float-label="$t('register.email')"
-                type="email"
-                v-model="user.data.email"
-              />
-            </q-field>
-            <q-field
-              :key="'password' + i"
-              :helper="$t('register.passwordHelper', { passwordLength })"
-              :error="hasErrors(`data.users.${i}.data.password`, $v.form.data.users.$each[i].data.password.$error)"
-              :error-label="errorLabel(`data.users.${i}.data.password`)"
-              class="q-mb-md"
-            >
-              <q-input
-                class="full-width"
-                :float-label="$t('register.password')"
-                type="password"
-                v-model="user.data.password"
-              />
-            </q-field>
-          </template>
-          <q-field v-if="!complete" class="q-mb-md">
-            <q-btn class="full-width" color="primary" :label="$t('register.submitForm')" />
+          <q-field
+            :key="'password' + i"
+            :helper="$t('register.passwordHelper', { passwordLength })"
+            :error="hasErrors(`data.users.${i}.data.password`, $v.form.data.users.$each[i].data.password.$error)"
+            :error-label="errorLabel(`data.users.${i}.data.password`)"
+            class="q-mb-md"
+          >
+            <q-input
+              class="full-width"
+              :float-label="$t('register.password')"
+              type="password"
+              v-model="user.data.password"
+            />
           </q-field>
-        </form>
+        </template>
+        <q-field v-if="!complete" class="q-mb-md">
+          <q-btn class="full-width" color="primary" @click.prevent="submit" :label="$t('register.submitForm')" />
+        </q-field>
       </q-card-main>
     </q-card>
   </q-page>

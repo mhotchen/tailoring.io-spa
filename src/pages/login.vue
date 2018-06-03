@@ -4,39 +4,38 @@
       <q-card-title>{{ $t('login.formTitle') }}</q-card-title>
       <q-card-separator />
       <q-card-main>
-        <form @submit.prevent="submit">
-          <q-field
-            :error="hasErrors('data.email', $v.form.data.email.$error)"
-            :error-label="errorLabel('data.email')"
-            class="q-mb-md"
-          >
-            <q-input
-              autofocus
-              class="full-width"
-              :float-label="$t('login.email')"
-              type="email"
-              v-model="form.data.email"
-            />
-          </q-field>
-          <q-field
-            class="q-mb-md"
-            :error="hasErrors('data.password', $v.form.data.password.$error)"
-            :error-label="errorLabel('data.password')"
-          >
-            <q-input
-              class="full-width"
-              :float-label="$t('login.password')"
-              type="password"
-              v-model="form.data.password"
-            />
-          </q-field>
-          <q-field class="q-mb-md">
-            <q-toggle class="full-width" :label="$t('login.rememberMe')" v-model="rememberMe" />
-          </q-field>
-          <q-field v-if="!complete" class="q-mb-md">
-            <q-btn class="full-width" color="primary" :label="$t('login.submitForm')" />
-          </q-field>
-        </form>
+        <q-field
+          :error="hasErrors('data.email', $v.form.data.email.$error)"
+          :error-label="errorLabel('data.email')"
+          class="q-mb-md"
+        >
+          <q-input
+            autofocus
+            class="full-width"
+            :float-label="$t('login.email')"
+            type="email"
+            v-model="form.data.email"
+          />
+        </q-field>
+        <q-field
+          class="q-mb-md"
+          :error="hasErrors('data.password', $v.form.data.password.$error)"
+          :error-label="errorLabel('data.password')"
+        >
+          <q-input
+            class="full-width"
+            :float-label="$t('login.password')"
+            type="password"
+            v-model="form.data.password"
+            @keyup.enter="submit"
+          />
+        </q-field>
+        <q-field class="q-mb-md">
+          <q-toggle class="full-width" :label="$t('login.rememberMe')" v-model="rememberMe" />
+        </q-field>
+        <q-field v-if="!complete" class="q-mb-md">
+          <q-btn class="full-width" color="primary" @click.prevent="submit" :label="$t('login.submitForm')" />
+        </q-field>
         <q-field class="q-mb-md">
           <i18n class="q-subheading" tag="p" path="login.createAccount.noAccount">
             <router-link class="text-no-wrap" place="startTrialLink" :to="{ name: 'register' }">
@@ -81,15 +80,19 @@ export default {
       }
     }
   },
-  computed: mapGetters('user', ['userIsLoading', 'userIsLoaded']),
+  computed: {
+    ...mapGetters('user', ['userIsLoading', 'userIsLoaded']),
+    ...mapGetters('accessToken', ['isAccessTokenSet'])
+  },
   created () {
     if (this.userIsLoading || this.userIsLoaded) {
       this.$router.replace({ name: 'index' })
     }
   },
   watch: {
-    userIsLoaded (newValue, oldValue) {
+    isAccessTokenSet (newValue, oldValue) {
       if (newValue) {
+        this.storeAccessTokenInStorage(this.rememberMe)
         this.$router.replace({ name: 'index' })
       }
     }
@@ -110,8 +113,10 @@ export default {
         let request = this.$axios.post('/users/login-attempts', this.form)
         await this.loadUser(request)
         this.setAccessToken((await request).data.meta.jwt.access_token)
-        this.storeAccessTokenInStorage(this.rememberMe)
       } catch (error) {
+        if (!('response' in error)) {
+          throw error
+        }
         switch (error.response.status) {
           case 422:
             this.errors = {...this.errors, ...error.response.data.errors}

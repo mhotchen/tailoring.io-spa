@@ -11,6 +11,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 export default {
   created () {
     this.loadAccessTokenFromStorage()
+    this.$q.addressbarColor.set()
   },
   computed: {
     ...mapGetters('accessToken', ['isAccessTokenSet', 'accessToken']),

@@ -4,30 +4,28 @@
       <q-card-title>{{ $t('verify.formTitle') }}</q-card-title>
       <q-card-separator />
       <q-card-main>
-        <form @submit.prevent="submit">
-          <q-alert class="q-mb-md" color="negative" icon="error" v-if="hasErrors('data.verification_code')">
-            {{ $t('verify.invalidIdInUrl') }}
-          </q-alert>
-          <q-field
-            :error="hasErrors('data.password', $v.form.data.password.$error)"
-            :error-label="errorLabel('data.password')"
-            class="q-mb-md"
-          >
-            <q-input
-              autofocus
-              class="full-width"
-              :float-label="$t('verify.password')"
-              type="password"
-              v-model="form.data.password"
-            />
-          </q-field>
-          <q-field class="q-mb-md">
-            <q-toggle class="full-width" :label="$t('verify.rememberMe')" v-model="rememberMe" />
-          </q-field>
-          <q-field v-if="!complete" class="q-mb-md">
-            <q-btn class="full-width" color="primary" :label="$t('verify.submitForm')" />
-          </q-field>
-        </form>
+        <q-alert class="q-mb-md" color="negative" icon="error" v-if="hasErrors('data.verification_code')">
+          {{ $t('verify.invalidIdInUrl') }}
+        </q-alert>
+        <q-field
+          :error="hasErrors('data.password', $v.form.data.password.$error)"
+          :error-label="errorLabel('data.password')"
+          class="q-mb-md"
+        >
+          <q-input
+            autofocus
+            class="full-width"
+            :float-label="$t('verify.password')"
+            type="password"
+            v-model="form.data.password"
+          />
+        </q-field>
+        <q-field class="q-mb-md">
+          <q-toggle class="full-width" :label="$t('verify.rememberMe')" v-model="rememberMe" />
+        </q-field>
+        <q-field v-if="!complete" class="q-mb-md">
+          <q-btn class="full-width" color="primary" @click.prevent="submit" :label="$t('verify.submitForm')" />
+        </q-field>
       </q-card-main>
     </q-card>
   </q-page>
@@ -65,15 +63,19 @@ export default {
       }
     }
   },
-  computed: mapGetters('user', ['userIsLoading', 'userIsLoaded']),
+  computed: {
+    ...mapGetters('user', ['userIsLoading', 'userIsLoaded']),
+    ...mapGetters('accessToken', ['isAccessTokenSet'])
+  },
   created () {
     if (this.userIsLoading || this.userIsLoaded) {
       this.$router.replace({ name: 'index' })
     }
   },
   watch: {
-    userIsLoaded (newValue, oldValue) {
+    isAccessTokenSet (newValue, oldValue) {
       if (newValue) {
+        this.storeAccessTokenInStorage(this.rememberMe)
         this.$router.replace({ name: 'index' })
       }
     }
@@ -94,7 +96,6 @@ export default {
         let request = this.$axios.post('/users/verifications', this.form)
         await this.loadUser(request)
         this.setAccessToken((await request).data.meta.jwt.access_token)
-        this.storeAccessTokenInStorage(this.rememberMe)
       } catch (error) {
         switch (error.response.status) {
           case 422:

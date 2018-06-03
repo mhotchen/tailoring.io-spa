@@ -1,6 +1,4 @@
-export default () => {
-  return {
-    customer: null,
-    loaded: false
-  }
+export default {
+  customer: null,
+  loaded: false
 }
