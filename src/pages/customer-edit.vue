@@ -87,6 +87,7 @@
 </style>
 
 <script>
+import { uid } from 'quasar'
 import { email, maxLength, required } from 'vuelidate/lib/validators'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -97,10 +98,18 @@ export default {
       id: this.$route.params.id,
       form: {
         data: {
+          id: uid(),
           name: null,
           email: null,
           telephone: null,
-          notes: [{data: {note: null}}]
+          notes: [
+            {
+              data: {
+                id: uid(),
+                note: null
+              }
+            }
+          ]
         }
       },
       errors: {
@@ -232,7 +241,7 @@ export default {
       }
     },
     addNote () {
-      this.form.data.notes.push({ data: { note: null } })
+      this.form.data.notes.push({ data: { id: uid(), note: null } })
       this.registerNoteErrorKeys()
     },
     registerNoteErrorKeys () {
