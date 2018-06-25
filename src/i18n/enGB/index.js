@@ -6,6 +6,9 @@ export default {
       accountListHeader: 'Account',
       accountSettings: 'Account settings',
       accountSettingsSub: 'Change email, password, etc.',
+      appSettingsListHeader: 'App settings',
+      measurementSettings: 'Measurement settings',
+      measurementSettingsSub: 'Configure how you measure your customers',
       logout: 'Logout'
     }
   },
@@ -19,6 +22,17 @@ export default {
       searchResults: 'No search results | One search result | {count} search results',
       recentlyUpdated: "You don't have any customers yet | You have one customer | {count} most recently updated customers",
       total: "You don't have any customers yet | You have one customer | You have {total} customers"
+    }
+  },
+  measurementSettings: {
+    columns: {
+      name: 'Name',
+      type: 'Measurement type',
+      garments: 'Garment(s)'
+    },
+    garmentTypeFilter: {
+      label: 'Filter by garment',
+      all: 'Show all'
     }
   },
   customer: {
@@ -104,6 +118,20 @@ export default {
     },
     verify: {
       code_invalid: 'Either this verification code has expired or your password is invalid.'
+    }
+  },
+  types: {
+    measurementType: {
+      BODY: { short: 'Body measurement', description: "This is a full measurement taken from the customer's body (eg. the customer's height or their neck circumference)" },
+      GARMENT: { short: 'Garment measurement', description: 'This is the full length measurement of a part of particular a garment (eg. the sleeve length for a jacket)' },
+      SAMPLE_ADJUSTMENT: { short: 'Adjustment of sample garment', description: "This is a measurement that is adjusting the measurement for an example garment (eg. to take length off the sleeve length on a sample jacket). These measurements are only visible if you're basing the measurements on a sample garment" },
+      ALTERATION: { short: 'Pattern alteration', description: 'These measurements are only applicable when performing garment alterations (eg. to reference a specific seam on a jacket that needs let out)' }
+    },
+    garmentType: {
+      JACKET: { short: 'Jacket' },
+      WAISTCOAT: { short: 'Waistcoat' },
+      SHIRT: { short: 'Shirt' },
+      TROUSERS: { short: 'Trousers' }
     }
   }
 }

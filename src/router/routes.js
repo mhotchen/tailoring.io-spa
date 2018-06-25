@@ -10,7 +10,8 @@ export default [
       { path: '/user/verify/:code', name: 'verify', component: () => import('pages/verify.vue') },
       { path: '/customers/new', name: 'customer-new', component: () => import('pages/customer-edit.vue') },
       { path: '/customers/:id', name: 'customer-view', component: () => import('pages/customer-view.vue') },
-      { path: '/customers/:id/edit', name: 'customer-edit', component: () => import('pages/customer-edit.vue') }
+      { path: '/customers/:id/edit', name: 'customer-edit', component: () => import('pages/customer-edit.vue') },
+      { path: '/measurement-settings', name: 'measurement-settings', component: () => import('pages/measurement-settings.vue') }
     ]
   },
 

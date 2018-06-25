@@ -45,6 +45,22 @@
           <q-item-main :label="$t('app.mainDrawer.logout')" />
         </q-item>
       </q-list>
+
+      <q-list
+        no-border
+        link
+        inset-delimiter
+        v-if="userIsLoaded"
+      >
+        <q-list-header>{{ $t('app.mainDrawer.appSettingsListHeader') }}</q-list-header>
+        <q-item @click.native="$router.push({ name: 'measurement-settings' })">
+          <q-item-side icon="exposure" />
+          <q-item-main
+            :label="$t('app.mainDrawer.measurementSettings')"
+            :sublabel="$t('app.mainDrawer.measurementSettingsSub')"
+          />
+        </q-item>
+      </q-list>
     </q-layout-drawer>
 
     <q-page-container>
