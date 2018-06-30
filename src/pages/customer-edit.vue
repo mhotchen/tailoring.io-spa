@@ -1,4 +1,4 @@
-<template v-if="userIsActive">
+<template>
   <q-page>
     <q-card flat>
       <q-card-title>
@@ -137,15 +137,6 @@ export default {
     }
   },
   created () {
-    if (!this.userIsLoading && !this.userIsActive) {
-      this.$router.replace({ name: 'login' })
-      return
-    }
-
-    if (!this.userIsActive) {
-      return
-    }
-
     if (this.id && this.getCustomerId === this.id) {
       this.form = this.getCustomer
       this.registerNoteErrorKeys()
@@ -154,14 +145,6 @@ export default {
     this.load()
   },
   watch: {
-    userIsActive (newValue, oldValue) {
-      if (!newValue) {
-        this.$router.replace({ name: 'login' })
-        return
-      }
-
-      this.load()
-    },
     '$route' (newValue, oldValue) {
       this.id = newValue.params.id
       this.load()
@@ -175,9 +158,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('accessToken', ['isAccessTokenSet']),
-    ...mapGetters('customer', ['getCustomer', 'getCustomerId']),
-    ...mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyId'])
+    ...mapGetters('company', ['companyId']),
+    ...mapGetters('customer', ['getCustomer', 'getCustomerId'])
   },
   methods: {
     ...mapActions('customer', ['hydrateFromCustomers', 'loadCustomer']),
@@ -190,8 +172,8 @@ export default {
 
       try {
         let request = this.id
-          ? this.$axios.put(`/companies/${this.userCompanyId}/customers/${this.id}`, this.form)
-          : this.$axios.post(`/companies/${this.userCompanyId}/customers`, this.form)
+          ? this.$axios.put(`/companies/${this.companyId}/customers/${this.id}`, this.form)
+          : this.$axios.post(`/companies/${this.companyId}/customers`, this.form)
 
         this.id = (await request).data.data.id
         await this.loadCustomer(request)
@@ -217,7 +199,7 @@ export default {
 
       this.hydrateFromCustomers(this.id)
       try {
-        await this.loadCustomer(this.$axios.get(`/companies/${this.userCompanyId}/customers/${this.id}`))
+        await this.loadCustomer(this.$axios.get(`/companies/${this.companyId}/customers/${this.id}`))
       } catch (error) {
         if (!('response' in error)) {
           throw error

@@ -25,10 +25,16 @@ export default {
     }
   },
   measurementSettings: {
+    title: 'Measurement settings',
+    unitOfMeasurement: {
+      label: 'Unit of measurement your company uses',
+      errorSaving: 'Unable to save your preferences. Try refreshing and giving it another go.'
+    },
     columns: {
       name: 'Name',
       type: 'Measurement type',
-      garments: 'Garment(s)'
+      garments: 'Garment(s)',
+      range: 'Value range'
     },
     garmentTypeFilter: {
       label: 'Filter by garment',
@@ -109,6 +115,7 @@ export default {
       array: 'This must be a list of values',
       required: 'This field is required',
       string: 'This field must be a string',
+      enum: 'The value selected isn\'t allowed',
       uuid: 'This value should be a valid identifier but it isn\'t in the format we expected'
     },
     password: {
@@ -132,6 +139,30 @@ export default {
       WAISTCOAT: { short: 'Waistcoat' },
       SHIRT: { short: 'Shirt' },
       TROUSERS: { short: 'Trousers' }
+    },
+    unitOfMeasurementType: {
+      INCHES: {
+        short: 'Inches',
+        abbr: '{num}"',
+        subunits: {
+          '0.125': '⅛',
+          '0.250': '¼',
+          '0.375': '⅜',
+          '0.500': '½',
+          '0.625': '⅝',
+          '0.750': '¾',
+          '0.875': '⅞'
+        }
+      },
+      CENTIMETERS: {
+        short: 'Centimeters',
+        abbr: '{num} cm',
+        subunits: {
+          '0.250': '.25',
+          '0.500': '.5',
+          '0.750': '.75'
+        }
+      }
     }
   }
 }

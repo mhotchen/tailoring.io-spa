@@ -81,13 +81,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['userIsLoading', 'userIsLoaded']),
     ...mapGetters('accessToken', ['isAccessTokenSet'])
-  },
-  created () {
-    if (this.userIsLoading || this.userIsLoaded) {
-      this.$router.replace({ name: 'index' })
-    }
   },
   watch: {
     isAccessTokenSet (newValue, oldValue) {
@@ -98,9 +92,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['loadUser']),
     ...mapActions('accessToken', ['storeAccessTokenInStorage']),
     ...mapMutations('accessToken', ['setAccessToken']),
+    ...mapActions('company', ['loadCompanyFromUserApiCall']),
+    ...mapActions('user', ['loadUser']),
     async submit () {
       this.resetErrors()
       this.$v.form.$touch()
@@ -112,6 +107,7 @@ export default {
       try {
         let request = this.$axios.post('/users/login-attempts', this.form)
         await this.loadUser(request)
+        await this.loadCompanyFromUserApiCall(request)
         this.setAccessToken((await request).data.meta.jwt.access_token)
       } catch (error) {
         if (!('response' in error)) {

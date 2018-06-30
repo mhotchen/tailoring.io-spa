@@ -52,6 +52,7 @@ module.exports = function (ctx) {
         'QAjaxBar',
         'QAlert',
         'QBtn',
+        'QBtnToggle',
         'QCard',
         'QCardActions',
         'QCardMain',

@@ -21,7 +21,7 @@ export const storeAccessTokenInStorage = ({ getters }, useCookies) => {
   SessionStorage.set(KEY, getters['accessToken'])
 }
 
-export const clearAccessTokenFromStorage = () => {
+export const clearAccessTokenFromStorage = ({ commit }) => {
   if (Cookies.has(KEY)) {
     Cookies.remove(KEY, { path: '/' })
   }
@@ -29,4 +29,6 @@ export const clearAccessTokenFromStorage = () => {
   if (SessionStorage.has(KEY)) {
     SessionStorage.remove(KEY)
   }
+
+  commit('setAccessToken', null)
 }

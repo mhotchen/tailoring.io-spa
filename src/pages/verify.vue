@@ -36,7 +36,7 @@
 
 <script>
 import { required } from 'vuelidate/lib/validators'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   data () {
@@ -63,15 +63,6 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapGetters('user', ['userIsLoading', 'userIsLoaded']),
-    ...mapGetters('accessToken', ['isAccessTokenSet'])
-  },
-  created () {
-    if (this.userIsLoading || this.userIsLoaded) {
-      this.$router.replace({ name: 'index' })
-    }
-  },
   watch: {
     isAccessTokenSet (newValue, oldValue) {
       if (newValue) {
@@ -81,9 +72,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['loadUser']),
     ...mapActions('accessToken', ['storeAccessTokenInStorage']),
     ...mapMutations('accessToken', ['setAccessToken']),
+    ...mapActions('company', ['loadCompanyFromUserApiCall']),
+    ...mapActions('user', ['loadUser']),
     async submit () {
       this.resetErrors()
       this.$v.form.$touch()
@@ -95,6 +87,7 @@ export default {
       try {
         let request = this.$axios.post('/users/verifications', this.form)
         await this.loadUser(request)
+        await this.loadCompanyFromUserApiCall(request)
         this.setAccessToken((await request).data.meta.jwt.access_token)
       } catch (error) {
         switch (error.response.status) {

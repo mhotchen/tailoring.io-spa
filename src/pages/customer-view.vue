@@ -1,4 +1,4 @@
-<template v-if="userIsActive">
+<template>
   <q-page>
     <q-card flat v-if="getCustomerName">
       <q-card-title>
@@ -96,32 +96,16 @@ export default {
     }
   },
   created () {
-    if (!this.userIsLoading && !this.userIsActive) {
-      this.$router.replace({ name: 'login' })
-      return
-    }
-
-    if (this.userIsActive) {
-      this.load()
-    }
+    this.load()
   },
   watch: {
-    userIsActive (newValue, oldValue) {
-      if (!newValue) {
-        this.$router.replace({ name: 'login' })
-        return
-      }
-
-      this.load()
-    },
     '$route' (newValue, oldValue) {
       this.id = newValue.params.id
       this.load()
     }
   },
   computed: {
-    ...mapGetters('accessToken', ['isAccessTokenSet']),
-    ...mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyId']),
+    ...mapGetters('company', ['companyId']),
     ...mapGetters('customer', [
       'getCustomerName',
       'getCustomerEmail',
@@ -137,7 +121,7 @@ export default {
     async load () {
       this.hydrateFromCustomers(this.id)
       try {
-        await this.loadCustomer(this.$axios.get(`/companies/${this.userCompanyId}/customers/${this.id}`))
+        await this.loadCustomer(this.$axios.get(`/companies/${this.companyId}/customers/${this.id}`))
       } catch (error) {
         if (!('response' in error)) {
           throw error

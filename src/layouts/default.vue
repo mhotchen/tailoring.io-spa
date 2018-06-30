@@ -24,6 +24,7 @@
 
     <q-layout-drawer
       v-model="leftDrawerOpen"
+      :overlay="true"
       :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
     >
       <q-list

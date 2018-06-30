@@ -1,7 +1,7 @@
-<template v-if="userIsActive">
+<template>
   <q-page>
     <q-card flat>
-      <q-card-title>{{ $t('index.title', { company: userCompanyName }) }}</q-card-title>
+      <q-card-title>{{ $t('index.title', { company: companyName }) }}</q-card-title>
       <q-card-separator />
       <q-card-main>
         <div class="row">
@@ -137,28 +137,15 @@ export default {
     }
   },
   created () {
-    if (!this.userIsLoading && !this.userIsActive) {
-      this.$router.replace({ name: 'login' })
-    }
-
-    if (this.userIsActive) {
-      this.load()
-    }
+    this.load()
   },
   watch: {
-    userIsActive (newValue, oldValue) {
-      if (!newValue) {
-        this.$router.replace({ name: 'login' })
-      }
-
-      this.load()
-    },
     search (newValue, oldValue) {
       this.load()
     }
   },
   computed: {
-    ...mapGetters('user', ['userIsActive', 'userIsLoading', 'userCompanyId', 'userCompanyName']),
+    ...mapGetters('company', ['companyId', 'companyName']),
     ...mapGetters('customers', [
       'getLastInsertedCustomers',
       'getCustomerName',
@@ -170,7 +157,7 @@ export default {
     ...mapActions('customers', ['loadCustomers']),
     async load () {
       this.loading = true
-      let request = this.$axios.get(`/companies/${this.userCompanyId}/customers`, {
+      let request = this.$axios.get(`/companies/${this.companyId}/customers`, {
         params: {
           q: this.search
         }
