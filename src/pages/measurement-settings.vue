@@ -41,9 +41,25 @@
                 />
               </q-field>
             </template>
+            <q-td key="name" slot="body-cell-name" slot-scope="props">
+              <template v-if="measurementSettingToEdit && measurementSettingToEdit.data.id === props.row.data.id">
+                <q-input
+                  v-model="measurementSettingToEdit.data.name"
+                  @change.prevent="saveEditingMeasurementSetting"
+                  maxlength="50"
+                  :after="[
+                    { icon: 'done', content: true, handler: saveEditingMeasurementSetting },
+                    { icon: 'cancel', handler: cancelEditingMeasurementSetting }
+                  ]"
+                />
+              </template>
+              <template v-else>
+                {{ props.row.data.name }}
+              </template>
+            </q-td>
             <q-td key="actions" slot="body-cell-actions" slot-scope="props">
               <q-btn @click.prevent="confirmDeleteMeasurementSetting(props.row)" flat dense color="negative" icon="delete" />
-              <q-btn @click.prevent="editRow(props.row)" flat dense color="primary" icon="edit" />
+              <q-btn @click.prevent="beginEditingMeasurementSetting(props.row)" flat dense color="primary" icon="edit" />
             </q-td>
           </q-table>
         </div>
@@ -57,6 +73,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { extend } from 'quasar'
 import { GARMENT_TYPE_ALL } from '../types/garmentType'
 import { UNIT_OF_MEASUREMENT_ALL } from '../types/unitOfMeasurementType'
 
@@ -65,6 +82,7 @@ export default {
     return {
       errorSavingUnitOfMeasurement: false,
       measurementSettingToDelete: null,
+      measurementSettingToEdit: null,
       confirmedDelete: false,
       columns: [
         {
@@ -173,9 +191,53 @@ export default {
     filterGarments (rows, terms, cols, cellValue) {
       return rows.filter((row) => terms === '' || row.data.garment_types.includes(terms))
     },
-    editRow (measurementSetting) {
-      console.log(measurementSetting)
+    async load () {
+      try {
+        this.settings = (await this.$axios.get(`/companies/${this.companyId}/measurement-settings`)).data.data
+      } catch (error) {
+        if (!('response' in error)) {
+          throw error
+        }
+
+        switch (error.response.status) {
+          case 403:
+          case 404:
+            this.$router.replace({ name: '404' })
+            break
+          default:
+            throw error
+        }
+      }
     },
+
+    // EDITING A MEASUREMENT SETTING.
+
+    beginEditingMeasurementSetting (measurementSetting) {
+      this.measurementSettingToEdit = extend(true, {}, measurementSetting)
+    },
+    cancelEditingMeasurementSetting () {
+      this.measurementSettingToEdit = null
+    },
+    async saveEditingMeasurementSetting () {
+      try {
+        await this.$axios.put(
+          `/companies/${this.companyId}/measurement-settings/${this.measurementSettingToEdit.data.id}`,
+          this.measurementSettingToEdit
+        )
+
+        // Update in place to save an AJAX request
+        this.settings = this.settings.map(setting =>
+          setting.data.id === this.measurementSettingToEdit.data.id ? this.measurementSettingToEdit : setting
+        )
+      } catch (error) {
+        this.$q.notify(this.$t('measurementSettings.edit.error'))
+      } finally {
+        this.measurementSettingToEdit = null
+      }
+    },
+
+    // DELETING A MEASUREMENT SETTING.
+
     async confirmDeleteMeasurementSetting (measurementSetting) {
       this.confirmedDelete = false
       this.measurementSettingToDelete = measurementSetting
@@ -203,24 +265,6 @@ export default {
       } finally {
         this.measurementSettingToDelete = null
         this.confirmedDelete = false
-      }
-    },
-    async load () {
-      try {
-        this.settings = (await this.$axios.get(`/companies/${this.companyId}/measurement-settings`)).data.data
-      } catch (error) {
-        if (!('response' in error)) {
-          throw error
-        }
-
-        switch (error.response.status) {
-          case 403:
-          case 404:
-            this.$router.replace({ name: '404' })
-            break
-          default:
-            throw error
-        }
       }
     }
   }

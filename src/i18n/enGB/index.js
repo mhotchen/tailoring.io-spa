@@ -44,6 +44,9 @@ export default {
       cancel: 'Cancel',
       error: 'An error occurred trying to delete this measurement setting'
     },
+    edit: {
+      error: 'An error occurred trying to save this measurement setting'
+    },
     garmentTypeFilter: {
       label: 'Filter by garment',
       all: 'Show all'
