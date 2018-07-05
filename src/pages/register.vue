@@ -12,6 +12,7 @@
           <q-input
             autofocus
             :float-label="$t('register.companyName')"
+            maxlength="50"
             type="text"
             v-model="form.data.name"
           />
