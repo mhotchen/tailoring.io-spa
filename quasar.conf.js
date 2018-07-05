@@ -7,6 +7,7 @@ module.exports = function (ctx) {
     plugins: [
       'axios',
       'i18n',
+      'unitOfMeasurement',
       'vuelidate'
     ],
     css: [
@@ -94,6 +95,7 @@ module.exports = function (ctx) {
       plugins: [
         'AddressbarColor',
         'Cookies',
+        'Dialog',
         'Notify',
         'SessionStorage'
       ]

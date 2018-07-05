@@ -34,7 +34,15 @@ export default {
       name: 'Name',
       type: 'Measurement type',
       garments: 'Garment(s)',
-      range: 'Value range'
+      minValue: 'Minimum allowed value',
+      maxValue: 'Maximum allowed value',
+      actions: 'Actions'
+    },
+    delete: {
+      message: 'Are you sure you want to delete the "{measurementSetting}" setting? You won\'t be able to use it in future measurements',
+      confirm: 'Delete it',
+      cancel: 'Cancel',
+      error: 'An error occurred trying to delete this measurement setting'
     },
     garmentTypeFilter: {
       label: 'Filter by garment',
@@ -145,22 +153,24 @@ export default {
         short: 'Inches',
         abbr: '{num}"',
         subunits: {
-          '0.125': '⅛',
-          '0.250': '¼',
-          '0.375': '⅜',
-          '0.500': '½',
-          '0.625': '⅝',
-          '0.750': '¾',
-          '0.875': '⅞'
+          '000': '',
+          '125': '⅛',
+          '250': '¼',
+          '375': '⅜',
+          '500': '½',
+          '625': '⅝',
+          '750': '¾',
+          '875': '⅞'
         }
       },
       CENTIMETERS: {
         short: 'Centimeters',
         abbr: '{num} cm',
         subunits: {
-          '0.250': '.25',
-          '0.500': '.5',
-          '0.750': '.75'
+          '000': '',
+          '250': '.25',
+          '500': '.5',
+          '750': '.75'
         }
       }
     }
