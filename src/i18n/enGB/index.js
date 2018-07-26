@@ -1,4 +1,7 @@
 export default {
+  generic: {
+    loading: 'Loading...'
+  },
   app: {
     name: 'tailoring.io',
     tagLine: 'Dead simple software for tailors.',
@@ -30,6 +33,13 @@ export default {
       label: 'Unit of measurement your company uses',
       errorSaving: 'Unable to save your preferences. Try refreshing and giving it another go.'
     },
+    table: {
+      title: 'Measurements',
+      subtitle: 'Here are the measurement settings which are displayed when measuring a customer. You can rename and delete existing measurements as well as create new ones.'
+    },
+    create: {
+      label: 'Create a new measurement'
+    },
     columns: {
       name: 'Name',
       type: 'Measurement type',
@@ -39,7 +49,8 @@ export default {
       actions: 'Actions'
     },
     delete: {
-      message: 'Are you sure you want to delete the "{measurementSetting}" setting? You won\'t be able to use it in future measurements',
+      title: 'Delete "{measurementSetting}"?',
+      message: 'Are you sure you want to delete the "{measurementSetting}" setting? You won\'t be able to use it in future measurements.',
       confirm: 'Delete it',
       cancel: 'Cancel',
       error: 'An error occurred trying to delete this measurement setting'
@@ -126,6 +137,8 @@ export default {
       array: 'This must be a list of values',
       required: 'This field is required',
       string: 'This field must be a string',
+      invalid: 'This value is invalid', // Only presented to users if there's a mismatch between server/client validation.
+      integer: 'The value must be a whole number',
       enum: 'The value selected isn\'t allowed',
       uuid: 'This value should be a valid identifier but it isn\'t in the format we expected'
     },
@@ -140,10 +153,10 @@ export default {
   },
   types: {
     measurementType: {
-      BODY: { short: 'Body measurement', description: "This is a full measurement taken from the customer's body (eg. the customer's height or their neck circumference)" },
-      GARMENT: { short: 'Garment measurement', description: 'This is the full length measurement of a part of particular a garment (eg. the sleeve length for a jacket)' },
-      SAMPLE_ADJUSTMENT: { short: 'Adjustment of sample garment', description: "This is a measurement that is adjusting the measurement for an example garment (eg. to take length off the sleeve length on a sample jacket). These measurements are only visible if you're basing the measurements on a sample garment" },
-      ALTERATION: { short: 'Pattern alteration', description: 'These measurements are only applicable when performing garment alterations (eg. to reference a specific seam on a jacket that needs let out)' }
+      BODY: { short: 'Body measurement', description: "This is a full measurement taken from the customer's body (eg. the customer's height or their neck circumference) and can be used on several types of garments at once." },
+      GARMENT: { short: 'Garment measurement', description: 'This is the full length measurement of a part of particular a garment (eg. the sleeve length for a jacket).' },
+      SAMPLE_ADJUSTMENT: { short: 'Sample garment adjustment', description: "This is a measurement that is based on an existing sample garment (eg. to take length off the sleeve length on a sample jacket). These measurements are only visible if you're basing the measurements on a sample garment." },
+      ALTERATION: { short: 'Pattern alteration', description: 'These measurements are only applicable when performing garment alterations (eg. to reference a specific seam on a jacket that needs let out).' }
     },
     garmentType: {
       JACKET: { short: 'Jacket' },
@@ -153,8 +166,8 @@ export default {
     },
     unitOfMeasurementType: {
       INCHES: {
-        short: 'Inches',
-        abbr: '{num}"',
+        short: 'Inch | Inches',
+        abbr: '{num}″',
         subunits: {
           '000': '',
           '125': '⅛',
@@ -167,7 +180,7 @@ export default {
         }
       },
       CENTIMETERS: {
-        short: 'Centimeters',
+        short: 'Centimetre | Centimetres',
         abbr: '{num} cm',
         subunits: {
           '000': '',
