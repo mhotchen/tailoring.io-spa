@@ -11,6 +11,8 @@ export const MEASUREMENT_TYPE_ALL = [
   MEASUREMENT_TYPE_ALTERATION
 ]
 
+const CENTIMETER_TO_MICROMETER = 10000
+
 /**
  * Body measurements can be associated with multiple types of garments (eg. the bicep circumference is useful in
  * both jackets and shirts). All other measurement types must be associated with exactly one garment (eg. the waist
@@ -43,8 +45,7 @@ export function getMeasurementTypeMinimumValueInUnitOfMeasurement (measurementTy
   switch (measurementType) {
     case MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT:
     case MEASUREMENT_TYPE_ALTERATION:
-      // Around -15cm
-      return micrometersToUnitOfMeasurement(-150000, unitOfMeasurement)[0]
+      return micrometersToUnitOfMeasurement(-15 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
     default:
       // 0
       return 0
@@ -63,15 +64,11 @@ export function getMeasurementTypeMaximumValueInUnitOfMeasurement (measurementTy
   switch (measurementType) {
     case MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT:
     case MEASUREMENT_TYPE_ALTERATION:
-      // Around 15cm
-      return micrometersToUnitOfMeasurement(150000, unitOfMeasurement)[0]
+      return micrometersToUnitOfMeasurement(15 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
     case MEASUREMENT_TYPE_BODY:
-      // Around 275cm, the tallest man in recorded history
-      return micrometersToUnitOfMeasurement(2750000, unitOfMeasurement)[0]
+      return micrometersToUnitOfMeasurement(280 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
     case MEASUREMENT_TYPE_GARMENT:
     default:
-      // Garments don't cover the full length of any particular body length so don't need the same range.
-      // 200 cm, a little over 6 feet which should cover any abnormally large waists.
-      return micrometersToUnitOfMeasurement(2000000, unitOfMeasurement)[0]
+      return micrometersToUnitOfMeasurement(200 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
   }
 }
