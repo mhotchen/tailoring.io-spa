@@ -217,7 +217,7 @@ export default {
           name: 'garments',
           label: this.$t('measurementSettings.columns.garments'),
           align: 'left',
-          field: setting => setting.data.garment_types,
+          field: setting => setting.data.garments,
           format: val => val.reduce((str, val) => `${str}, ` + this.$t(`types.garmentType.${val}.short`), '').slice(2),
           visible: true
         },
@@ -369,7 +369,7 @@ export default {
     ...mapActions('company', ['loadCompany']),
     ...mapMutations('company', ['setCompanyUnitOfMeasurement']),
     filterGarments (rows, terms, cols, cellValue) {
-      return rows.filter((row) => terms === '' || row.data.garment_types.includes(terms))
+      return rows.filter((row) => terms === '' || row.data.garments.includes(terms))
     },
     async load () {
       try {
