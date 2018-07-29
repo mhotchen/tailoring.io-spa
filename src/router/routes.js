@@ -51,6 +51,12 @@ export default [
         name: 'measurement-settings',
         meta: { requiresUser: true },
         component: () => import('pages/measurement-settings.vue')
+      },
+      {
+        path: '/sample-garments',
+        name: 'sample-garments',
+        meta: { requiresUser: true },
+        component: () => import('pages/sample-garments.vue')
       }
     ]
   },

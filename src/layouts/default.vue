@@ -55,10 +55,17 @@
       >
         <q-list-header>{{ $t('app.mainDrawer.appSettingsListHeader') }}</q-list-header>
         <q-item @click.native="$router.push({ name: 'measurement-settings' })">
-          <q-item-side icon="exposure" />
+          <q-item-side icon="straighten" />
           <q-item-main
             :label="$t('app.mainDrawer.measurementSettings')"
             :sublabel="$t('app.mainDrawer.measurementSettingsSub')"
+          />
+        </q-item>
+        <q-item @click.native="$router.push({ name: 'sample-garments' })">
+          <q-item-side icon="people" />
+          <q-item-main
+            :label="$t('app.mainDrawer.sampleGarments')"
+            :sublabel="$t('app.mainDrawer.sampleGarmentsSub')"
           />
         </q-item>
       </q-list>

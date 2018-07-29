@@ -12,6 +12,8 @@ export default {
       appSettingsListHeader: 'App settings',
       measurementSettings: 'Measurement settings',
       measurementSettingsSub: 'Configure how you measure your customers',
+      sampleGarments: 'Sample garments',
+      sampleGarmentsSub: 'Set the sample garments to reference when taking a customer\'s measurements',
       logout: 'Logout'
     }
   },
@@ -57,6 +59,35 @@ export default {
     },
     edit: {
       error: 'An error occurred trying to save this measurement setting'
+    },
+    garmentTypeFilter: {
+      label: 'Filter by garment',
+      all: 'Show all'
+    }
+  },
+  sampleGarments: {
+    title: 'Sample garments',
+    table: {
+      title: 'Garments',
+      subtitle: 'Here are the sample garments which can be used as a reference when measuring a customer. You can rename and delete existing garments as well as create new ones.'
+    },
+    create: {
+      label: 'Create a new sample garment'
+    },
+    columns: {
+      name: 'Name',
+      garment: 'Garment',
+      actions: 'Actions'
+    },
+    delete: {
+      title: 'Delete "{garment}"?',
+      message: 'Are you sure you want to delete the "{garment}" sample garment? You won\'t be able to use it in future measurements.',
+      confirm: 'Delete it',
+      cancel: 'Cancel',
+      error: 'An error occurred trying to delete this garment'
+    },
+    edit: {
+      error: 'An error occurred trying to save this garment'
     },
     garmentTypeFilter: {
       label: 'Filter by garment',
