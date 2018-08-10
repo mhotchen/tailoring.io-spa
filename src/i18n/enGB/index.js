@@ -1,6 +1,7 @@
 export default {
   generic: {
-    loading: 'Loading...'
+    loading: 'Loading...',
+    cancel: 'Cancel'
   },
   app: {
     name: 'tailoring.io',
@@ -107,6 +108,15 @@ export default {
         heading: 'Orders',
         none: 'No orders yet!',
         new: 'Create a new order'
+      },
+      measurements: {
+        heading: 'Measurements',
+        body: 'Body',
+        garments: 'Garments',
+        noMeasurements: 'No measurements yet!',
+        addNew: 'Add measurements',
+        edit: 'Edit measurements',
+        view: 'View measurements'
       }
     },
     edit: {
@@ -121,6 +131,24 @@ export default {
         addNote: 'Add another'
       },
       submitForm: 'Save'
+    }
+  },
+  measurementProfile: {
+    edit: {
+      form: {
+        name: {
+          label: 'Profile name',
+          helper: 'For example "Casual shirt" or "Dress shirt" to distinguish between two different shirt measurement profiles',
+          default: 'Default'
+        },
+        commitMessage: {
+          label: 'Change message',
+          helper: 'An optional description of the changes (eg. why or how) that can be viewed on the customer\'s profile'
+        },
+        save: {
+          label: 'Save changes'
+        }
+      }
     }
   },
   account: {
@@ -160,6 +188,9 @@ export default {
     submitForm: 'Verify and login'
   },
   fields: {
+    measurementSelect: {
+      notSet: 'Please select'
+    },
     email: {
       email: "This isn't a valid email address",
       unique: 'This email address is already in use'
@@ -171,6 +202,7 @@ export default {
       invalid: 'This value is invalid', // Only presented to users if there's a mismatch between server/client validation.
       integer: 'The value must be a whole number',
       enum: 'The value selected isn\'t allowed',
+      distinct: 'The value must be unique',
       uuid: 'This value should be a valid identifier but it isn\'t in the format we expected'
     },
     password: {
@@ -183,6 +215,10 @@ export default {
     }
   },
   types: {
+    measurementProfileType: {
+      BODY: { short: 'Body measurements', title: 'Body measurements for {customer}' },
+      GARMENT: { short: 'Garment measurements', title: '{garment} measurements for {customer}' }
+    },
     measurementType: {
       BODY: { short: 'Body measurement', description: "This is a full measurement taken from the customer's body (eg. the customer's height or their neck circumference) and can be used on several types of garments at once." },
       GARMENT: { short: 'Garment measurement', description: 'This is the full length measurement of a part of particular a garment (eg. the sleeve length for a jacket).' },

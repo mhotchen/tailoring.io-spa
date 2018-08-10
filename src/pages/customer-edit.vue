@@ -214,7 +214,6 @@ export default {
             throw error
         }
       }
-      this.loaded = true
     },
     removeNote (i) {
       this.form.data.notes.splice(i, 1)

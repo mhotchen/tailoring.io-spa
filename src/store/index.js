@@ -5,6 +5,7 @@ import accessToken from './accessToken'
 import company from './company'
 import customer from './customer'
 import customers from './customers'
+import measurementSettings from './measurementSettings'
 import user from './user'
 
 Vue.use(Vuex)
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     company,
     customer,
     customers,
+    measurementSettings,
     user
   }
 })

@@ -47,29 +47,30 @@ export function unitOfMeasurementToMicrometers (measurement, unit) {
 }
 
 /**
- * Get a list of incrementing micrometers for the division of the subunit in to its subunits.
- * For example we divide inches in to eighths, so the list will return 7 items starting at one eighth of an inch in
- * micrometers, a quarter, three eighths, ... until seven eighths.
- *
- * @param {string} unit One of the constants in this file
- * @returns {number[]}  A list with incremental subunits in micrometers
+ * @param {string} unit
+ * @returns {number}
  */
-export function subunitListInMicrometers (unit) {
-  let createList = (wholeUnit, divisionCount) => {
-    let units = []
-    let subunits = wholeUnit / divisionCount
-    for (let i = subunits; i < wholeUnit; i += subunits) {
-      units.push(i)
-    }
-
-    return units
-  }
-
+export function getWholeUnitIncrementInMicrometers (unit) {
   switch (unit) {
     case UNIT_OF_MEASUREMENT_CENTIMETERS:
-      return createList(MICROMETERS_IN_CENTIMETER, 4)
+      return MICROMETERS_IN_CENTIMETER
     case UNIT_OF_MEASUREMENT_INCHES:
-      return createList(MICROMETERS_IN_INCH, 8)
+      return MICROMETERS_IN_INCH
+    default:
+      throw Error(`Unknown unit of measurement: ${unit}`)
+  }
+}
+
+/**
+ * @param {string} unit
+ * @returns {number}
+ */
+export function getSubunitIncrementInMicrometers (unit) {
+  switch (unit) {
+    case UNIT_OF_MEASUREMENT_CENTIMETERS:
+      return MICROMETERS_IN_CENTIMETER / 4
+    case UNIT_OF_MEASUREMENT_INCHES:
+      return MICROMETERS_IN_INCH / 8
     default:
       throw Error(`Unknown unit of measurement: ${unit}`)
   }

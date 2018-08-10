@@ -14,6 +14,7 @@
           class="q-mb-md"
         />
         <div class="row">
+          <!-- Contact info -->
           <div v-if="getCustomerEmail || getCustomerTelephone" class="col-lg-4 q-pr-md q-pb-md">
             <q-card>
               <q-card-title>
@@ -40,6 +41,8 @@
               </q-list>
             </q-card>
           </div>
+
+          <!-- Notes -->
           <div v-if="hasCustomerNotes" class="col-lg-4 q-pr-md q-pb-md">
             <q-card>
               <q-card-title>
@@ -54,6 +57,8 @@
               </q-list>
             </q-card>
           </div>
+
+          <!-- Orders -->
           <div class="col-lg-4 q-pr-md q-pb-md">
             <q-card>
               <q-card-title>
@@ -77,6 +82,105 @@
               </q-card-main>
             </q-card>
           </div>
+
+          <!-- Measurements -->
+          <div class="col-lg-4 q-pr-md q-pb-md">
+            <q-card>
+              <q-card-title>
+                {{ $t('customer.view.measurements.heading') }}
+              </q-card-title>
+              <q-card-separator />
+              <q-list>
+                <!-- Body measurements -->
+                <q-list-header label>
+                  {{ $t('types.measurementProfileType.BODY.short') }}
+                </q-list-header>
+                <q-item>
+                  <q-item-main>
+                    <q-item-tile v-if="measurementProfileHasCommits(getCustomerBodyMeasurementProfile)">
+                      <q-btn
+                        @click="$router.push({
+                          name: 'edit-measurement-profile',
+                          params: { customer: id, id: getMeasurementProfileId(getCustomerBodyMeasurementProfile) },
+                        })"
+                        color="primary"
+                        :label="$t('customer.view.measurements.edit')"
+                      />
+                      <q-btn
+                        @click="$router.push({
+                          name: 'view-measurement-profile',
+                          params: { customer: id, id: getMeasurementProfileId(getCustomerBodyMeasurementProfile) },
+                        })"
+                        flat
+                        no-caps
+                        color="primary"
+                        :label="$t('customer.view.measurements.view')"
+                      />
+                    </q-item-tile>
+                    <q-item-tile v-else>
+                      {{ $t('customer.view.measurements.noMeasurements') }}
+                      <q-btn
+                        @click="$router.push({
+                          name: 'edit-measurement-profile',
+                          params: { customer: id, id: getMeasurementProfileId(getCustomerBodyMeasurementProfile) },
+                        })"
+                        icon="add"
+                        color="primary"
+                        :label="$t('customer.view.measurements.addNew')"
+                      />
+                    </q-item-tile>
+                  </q-item-main>
+                </q-item>
+
+                <!-- Garment specific measurements -->
+                <template v-for="garment in garments">
+                  <q-list-header label :key="garment + 'title'">
+                    {{ $t(`types.garmentType.${garment}.short`)}}
+                  </q-list-header>
+                  <q-item-main :key="garment + 'main'">
+                    <template v-if="getCustomerMeasurementProfilesByGarment(garment).length > 0">
+                      <q-item-tile
+                        :key="getMeasurementProfileId(profile)"
+                        v-for="profile in getCustomerMeasurementProfilesByGarment(garment)"
+                      >
+                        {{ profile.data.name }}
+                        <q-btn
+                          @click="$router.push({
+                          name: 'edit-measurement-profile',
+                          params: { customer: id, id: getMeasurementProfileId(profile) },
+                        })"
+                          color="primary"
+                          :label="$t('customer.view.measurements.edit')"
+                        />
+                        <q-btn
+                          @click="$router.push({
+                          name: 'view-measurement-profile',
+                          params: { customer: id, id: getMeasurementProfileId(profile) },
+                        })"
+                          flat
+                          no-caps
+                          color="primary"
+                          :label="$t('customer.view.measurements.view')"
+                        />
+                      </q-item-tile>
+                    </template>
+                    <q-item-tile v-else>
+                      {{ $t('customer.view.measurements.noMeasurements') }}
+                      <q-btn
+                        @click="$router.push({
+                          name: 'new-measurement-profile',
+                          params: { customer: id, garment },
+                        })"
+                        icon="add"
+                        color="primary"
+                        :label="$t('customer.view.measurements.addNew')"
+                      />
+                    </q-item-tile>
+                  </q-item-main>
+                </template>
+              </q-list>
+            </q-card>
+          </div>
         </div>
       </q-card-main>
     </q-card>
@@ -88,6 +192,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { GARMENT_TYPE_ALL } from '../types/garmentType'
 
 export default {
   data () {
@@ -113,8 +218,16 @@ export default {
       'getCustomerNotes',
       'hasCustomerNotes',
       'getCustomerNoteCreatedAt',
-      'getCustomerNoteValue'
-    ])
+      'getCustomerNoteValue',
+      'getCustomerBodyMeasurementProfile',
+      'getCustomerMeasurementProfilesByGarment',
+      'getMeasurementProfileId',
+      'getMeasurementProfileType',
+      'measurementProfileHasCommits'
+    ]),
+    garments () {
+      return GARMENT_TYPE_ALL
+    }
   },
   methods: {
     ...mapActions('customer', ['hydrateFromCustomers', 'loadCustomer']),

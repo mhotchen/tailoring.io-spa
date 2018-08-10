@@ -76,6 +76,7 @@ module.exports = function (ctx) {
         'QList',
         'QListHeader',
         'QModal',
+        'QModalLayout',
         'QPage',
         'QPageContainer',
         'QSearch',

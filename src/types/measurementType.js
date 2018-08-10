@@ -1,5 +1,3 @@
-import { micrometersToUnitOfMeasurement } from './unitOfMeasurementType'
-
 export const MEASUREMENT_TYPE_BODY = 'BODY'
 export const MEASUREMENT_TYPE_GARMENT = 'GARMENT'
 export const MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT = 'SAMPLE_ADJUSTMENT'
@@ -38,14 +36,13 @@ export function canMeasurementTypeHaveMultipleGarments (measurementType) {
  * Some measurement types allow for negative values as the minimum value (alteration/adjustment measurements).
  *
  * @param {string} measurementType   One of the constants in this file
- * @param {string} unitOfMeasurement The preferred unit of measurement
  * @returns {number}
  */
-export function getMeasurementTypeMinimumValueInUnitOfMeasurement (measurementType, unitOfMeasurement) {
+export function getMeasurementTypeMinimumValue (measurementType) {
   switch (measurementType) {
     case MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT:
     case MEASUREMENT_TYPE_ALTERATION:
-      return micrometersToUnitOfMeasurement(-15 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
+      return -15 * CENTIMETER_TO_MICROMETER
     default:
       // 0
       return 0
@@ -57,18 +54,17 @@ export function getMeasurementTypeMinimumValueInUnitOfMeasurement (measurementTy
  * whole unit of measurement (ie. to the nearest inch or centimeter).
  *
  * @param {string} measurementType   One of the constants in this file
- * @param {string} unitOfMeasurement The preferred unit of measurement
  * @returns {number}
  */
-export function getMeasurementTypeMaximumValueInUnitOfMeasurement (measurementType, unitOfMeasurement) {
+export function getMeasurementTypeMaximumValue (measurementType) {
   switch (measurementType) {
     case MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT:
     case MEASUREMENT_TYPE_ALTERATION:
-      return micrometersToUnitOfMeasurement(15 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
+      return 15 * CENTIMETER_TO_MICROMETER
     case MEASUREMENT_TYPE_BODY:
-      return micrometersToUnitOfMeasurement(280 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
+      return 280 * CENTIMETER_TO_MICROMETER
     case MEASUREMENT_TYPE_GARMENT:
     default:
-      return micrometersToUnitOfMeasurement(200 * CENTIMETER_TO_MICROMETER, unitOfMeasurement)[0]
+      return 200 * CENTIMETER_TO_MICROMETER
   }
 }

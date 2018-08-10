@@ -47,6 +47,18 @@ export default [
         component: () => import('pages/customer-edit.vue')
       },
       {
+        path: '/customers/:customer/measurement-profiles/new/:garment',
+        name: 'new-measurement-profile',
+        meta: { requiresUser: true },
+        component: () => import('pages/measurement-profile-edit.vue')
+      },
+      {
+        path: '/customers/:customer/measurement-profiles/:id',
+        name: 'edit-measurement-profile',
+        meta: { requiresUser: true },
+        component: () => import('pages/measurement-profile-edit.vue')
+      },
+      {
         path: '/measurement-settings',
         name: 'measurement-settings',
         meta: { requiresUser: true },

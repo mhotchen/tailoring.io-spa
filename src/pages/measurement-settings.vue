@@ -22,7 +22,7 @@
         </div>
         <div class="row">
           <q-table
-            :data="settings"
+            :data="getMeasurementSettings"
             :columns="columns"
             :visible-columns="columns.filter(col => col.visible === true).map(col => col.name)"
             row-key="id"
@@ -106,6 +106,7 @@
                 <q-field
                   :error="hasErrors('data.min_value', $v.measurementSettingToCreate.data.min_value.$error)"
                   :error-label="errorLabel('data.min_value')"
+                  class="no-wrap col"
                 >
                   <app-measurement-select
                     v-model="measurementSettingToCreate.data.min_value"
@@ -175,8 +176,8 @@ import { GARMENT_TYPE_ALL } from '../types/garmentType'
 import {
   MEASUREMENT_TYPE_ALL,
   canMeasurementTypeHaveMultipleGarments,
-  getMeasurementTypeMinimumValueInUnitOfMeasurement,
-  getMeasurementTypeMaximumValueInUnitOfMeasurement
+  getMeasurementTypeMinimumValue,
+  getMeasurementTypeMaximumValue
 } from '../types/measurementType'
 import { UNIT_OF_MEASUREMENT_ALL } from '../types/unitOfMeasurementType'
 
@@ -245,7 +246,6 @@ export default {
           visible: true
         }
       ],
-      settings: [],
       types: [
         ...MEASUREMENT_TYPE_ALL.map((type) => {
           return {
@@ -311,6 +311,7 @@ export default {
   },
   computed: {
     ...mapGetters('company', ['company', 'companyId', 'companyUnitOfMeasurement']),
+    ...mapGetters('measurementSettings', ['getMeasurementSettings']),
     filterGarmentTypes () {
       return [
         { label: this.$t('measurementSettings.garmentTypeFilter.all'), value: '' },
@@ -353,27 +354,23 @@ export default {
       }
     },
     measurementSettingToCreateMinimumValue () {
-      return getMeasurementTypeMinimumValueInUnitOfMeasurement(
-        this.measurementSettingToCreate.data.type,
-        this.companyUnitOfMeasurement
-      )
+      return getMeasurementTypeMinimumValue(this.measurementSettingToCreate.data.type)
     },
     measurementSettingToCreateMaximumValue () {
-      return getMeasurementTypeMaximumValueInUnitOfMeasurement(
-        this.measurementSettingToCreate.data.type,
-        this.companyUnitOfMeasurement
-      )
+      return getMeasurementTypeMaximumValue(this.measurementSettingToCreate.data.type)
     }
   },
   methods: {
     ...mapActions('company', ['loadCompany']),
     ...mapMutations('company', ['setCompanyUnitOfMeasurement']),
+    ...mapActions('measurementSettings', ['loadMeasurementSettings', 'loadMeasurementSetting']),
+    ...mapMutations('measurementSettings', ['removeMeasurementSetting']),
     filterGarments (rows, terms, cols, cellValue) {
       return rows.filter((row) => terms === '' || row.data.garments.includes(terms))
     },
     async load () {
       try {
-        this.settings = (await this.$axios.get(`/companies/${this.companyId}/measurement-settings`)).data.data
+        await this.loadMeasurementSettings(this.$axios.get(`/companies/${this.companyId}/measurement-settings`))
       } catch (error) {
         if (!('response' in error)) {
           throw error
@@ -399,8 +396,8 @@ export default {
           name: '',
           type: null,
           garments: [],
-          min_value: 0,
-          max_value: 0
+          min_value: null,
+          max_value: null
         }
       }
     },
@@ -417,9 +414,8 @@ export default {
       }
 
       try {
-        this.settings.unshift(
-          (await this.$axios.post(`/companies/${this.companyId}/measurement-settings`, this.measurementSettingToCreate))
-            .data
+        await this.loadMeasurementSetting(
+          this.$axios.post(`/companies/${this.companyId}/measurement-settings`, this.measurementSettingToCreate)
         )
         this.cancelCreatingMeasurementSetting()
       } catch (error) {
@@ -443,14 +439,11 @@ export default {
     },
     async saveEditingMeasurementSetting () {
       try {
-        await this.$axios.put(
-          `/companies/${this.companyId}/measurement-settings/${this.measurementSettingToEdit.data.id}`,
-          this.measurementSettingToEdit
-        )
-
-        // Update in place to save an AJAX request
-        this.settings = this.settings.map(setting =>
-          setting.data.id === this.measurementSettingToEdit.data.id ? this.measurementSettingToEdit : setting
+        await this.loadMeasurementSetting(
+          this.$axios.put(
+            `/companies/${this.companyId}/measurement-settings/${this.measurementSettingToEdit.data.id}`,
+            this.measurementSettingToEdit
+          )
         )
       } catch (error) {
         this.$q.notify(this.$t('measurementSettings.edit.error'))
@@ -481,9 +474,7 @@ export default {
     async deleteMeasurementSetting () {
       try {
         await this.$axios.delete(`/companies/${this.companyId}/measurement-settings/${this.measurementSettingToDelete.data.id}`)
-
-        // Remove from the settings instead of reloading them to save an AJAX request.
-        this.settings = this.settings.filter(setting => setting.data.id !== this.measurementSettingToDelete.data.id)
+        this.removeMeasurementSetting(this.measurementSettingToDelete.data.id)
       } catch (error) {
         this.$q.notify(this.$t('measurementSettings.delete.error'))
       } finally {

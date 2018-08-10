@@ -57,7 +57,8 @@ measurements in a single unit of measurement and convert to/from the customer's 
 If a customer logs the measurement 30.25 inches then storing as centimeters of even millimeters doesn't provide enough
 accuracy. 30.25 inches converted to millimeters and back to inches again yields the result 30.23622 inches since that's
 768 mm. 30.25 inches is actually 768.35 mm. For that reason the storage needs to be a more accurate unit of measurement
-and the standised micrometers (µm, one thousandth of a millimetre, or one millionth of a metre) is used instead. 30.25
-inches can be stored without any loss of accuracy as 768350 µm.
+and the standardised micrometers (µm, one thousandth of a millimetre, or one millionth of a metre) is used instead.
+30.25 inches can be stored without any loss of accuracy as 768350 µm.
 
-Finally, inches are broken down in to quarters, whereas centimeters are never broken down in to sub-units.
+Finally, inches are broken down in to eighths, whereas centimeters are broken in to quarters. Each also has a separate
+method of viewing (eg. 30.25 cm vs 23¼″).
