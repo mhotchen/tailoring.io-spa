@@ -110,23 +110,24 @@ export default {
   watch: {
     opened (newValue, oldValue) {
       // setTimeout lets the modal window open/close before hanging on a redraw thus 'feeling' quicker
-      if (newValue) {
-        setTimeout(this.computeTree, 10)
-      } else {
-        setTimeout(() => { this.tree = [] }, 10)
-      }
+      setTimeout(() => {
+        this.tree = newValue ? this.computeTree() : []
+      }, 10)
     }
   },
   methods: {
     computeTree () {
       let increment = getWholeUnitIncrementInMicrometers(this.unitOfMeasurement)
+      let tree = []
       for (let i = this.min; i <= this.max; i += increment) {
-        this.tree.push({
+        tree.push({
           label: this.$unitOfMeasurement.valueToText(i, this.unitOfMeasurement),
           value: i,
           subtree: [] // Dynamically generated to considerably reduce number of DOM elements.
         })
       }
+
+      return tree
     },
     select (value) {
       this.tree = []
@@ -138,7 +139,7 @@ export default {
       // On low-range Android devices the following map technique was too slow so I replaced it with the forEach/splice
       // below instead for performance reasons.
 
-      // this.tree = this.tree.map((node) =>
+      // this.tree = this.tree.map(node =>
       //   node.value === value && node.subtree.length === 0 ? this.openSubtree(node) : this.closeSubtree(node)
       // )
       this.tree.forEach((node, i) => {
