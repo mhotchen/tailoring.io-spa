@@ -104,7 +104,7 @@
                           params: { customer: id, id: getMeasurementProfileId(getCustomerBodyMeasurementProfile) },
                         })"
                         color="primary"
-                        :label="$t('customer.view.measurements.edit')"
+                        :label="$t('customer.view.measurements.alter')"
                       />
                       <q-btn
                         @click="$router.push({
@@ -124,9 +124,8 @@
                           name: 'edit-measurement-profile',
                           params: { customer: id, id: getMeasurementProfileId(getCustomerBodyMeasurementProfile) },
                         })"
-                        icon="add"
                         color="primary"
-                        :label="$t('customer.view.measurements.addNew')"
+                        :label="$t('customer.view.measurements.measure')"
                       />
                     </q-item-tile>
                   </q-item-main>
@@ -134,49 +133,57 @@
 
                 <!-- Garment specific measurements -->
                 <template v-for="garment in garments">
+                  <q-item-separator :key="garment + 'separator'" />
                   <q-list-header label :key="garment + 'title'">
                     {{ $t(`types.garmentType.${garment}.short`)}}
+                    <q-btn
+                      @click="$router.push({
+                        name: 'new-measurement-profile',
+                        params: { customer: id, garment },
+                      })"
+                      class="float-right"
+                      color="primary"
+                      flat
+                      dense
+                      size="sm"
+                      :label="$t('customer.view.measurements.new')"
+                    />
                   </q-list-header>
-                  <q-item-main :key="garment + 'main'">
-                    <template v-if="getCustomerMeasurementProfilesByGarment(garment).length > 0">
-                      <q-item-tile
-                        :key="getMeasurementProfileId(profile)"
-                        v-for="profile in getCustomerMeasurementProfilesByGarment(garment)"
-                      >
-                        {{ profile.data.name }}
+                  <template v-if="getCustomerMeasurementProfilesByGarment(garment).length > 0">
+                    <q-item
+                      :key="getMeasurementProfileId(profile)"
+                      v-for="profile in getCustomerMeasurementProfilesByGarment(garment)"
+                    >
+                      <q-item-main>
+                        {{ profile.data.current_name }}
+                      </q-item-main>
+                      <q-item-side right>
                         <q-btn
                           @click="$router.push({
-                          name: 'edit-measurement-profile',
-                          params: { customer: id, id: getMeasurementProfileId(profile) },
-                        })"
+                            name: 'edit-measurement-profile',
+                            params: { customer: id, id: getMeasurementProfileId(profile) },
+                          })"
                           color="primary"
-                          :label="$t('customer.view.measurements.edit')"
+                          :label="$t('customer.view.measurements.alter')"
                         />
                         <q-btn
                           @click="$router.push({
-                          name: 'view-measurement-profile',
-                          params: { customer: id, id: getMeasurementProfileId(profile) },
-                        })"
+                            name: 'view-measurement-profile',
+                            params: { customer: id, id: getMeasurementProfileId(profile) },
+                          })"
                           flat
                           no-caps
                           color="primary"
                           :label="$t('customer.view.measurements.view')"
                         />
-                      </q-item-tile>
-                    </template>
-                    <q-item-tile v-else>
+                      </q-item-side>
+                    </q-item>
+                  </template>
+                  <q-item v-else :key="garment + 'none'">
+                    <q-item-main>
                       {{ $t('customer.view.measurements.noMeasurements') }}
-                      <q-btn
-                        @click="$router.push({
-                          name: 'new-measurement-profile',
-                          params: { customer: id, garment },
-                        })"
-                        icon="add"
-                        color="primary"
-                        :label="$t('customer.view.measurements.addNew')"
-                      />
-                    </q-item-tile>
-                  </q-item-main>
+                    </q-item-main>
+                  </q-item>
                 </template>
               </q-list>
             </q-card>

@@ -38,10 +38,10 @@
                 class="float-right"
                 :label="$t('measurementSettings.garmentTypeFilter.label')"
               >
-                <q-select
+                <app-garment-select
                   color="secondary"
                   v-model="filterGarmentType"
-                  :options="filterGarmentTypes"
+                  allow-clear
                 />
               </q-field>
               <q-btn
@@ -87,18 +87,9 @@
                   :error="hasErrors('data.garments', $v.measurementSettingToCreate.data.garments.$error)"
                   :error-label="errorLabel('data.garments')"
                 >
-                  <q-select
-                    v-if="createMeasurementTypeCanHaveMultipleGarments"
-                    v-model="measurementSettingToCreate.data.garments"
-                    multiple
-                    :options="garmentTypes"
-                  />
-                  <!-- below is a computed property to convert to an array -->
-                  <q-select
-                    v-else
-                    v-model="measurementSettingToCreateSingleGarment"
-                    radio
-                    :options="garmentTypes"
+                  <app-garment-select
+                    v-model="measurementSettingToCreateGarments"
+                    :multiple="createMeasurementTypeCanHaveMultipleGarments"
                   />
                 </q-field>
               </q-td>
@@ -171,8 +162,8 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { required, maxLength } from 'vuelidate/lib/validators'
 import { extend, uid } from 'quasar'
+import AppGarmentSelect from '../components/AppGarmentSelect'
 import AppMeasurementSelect from '../components/AppMeasurementSelect'
-import { GARMENT_TYPE_ALL } from '../types/garmentType'
 import {
   MEASUREMENT_TYPE_ALL,
   canMeasurementTypeHaveMultipleGarments,
@@ -183,6 +174,7 @@ import { UNIT_OF_MEASUREMENT_ALL } from '../types/unitOfMeasurementType'
 
 export default {
   components: {
+    'app-garment-select': AppGarmentSelect,
     'app-measurement-select': AppMeasurementSelect
   },
   data () {
@@ -257,9 +249,6 @@ export default {
         })
       ],
       filterGarmentType: '',
-      garmentTypes: GARMENT_TYPE_ALL.map((type) => {
-        return { label: this.$t(`types.garmentType.${type}.short`), value: type }
-      }),
       unitOfMeasurementTypes: UNIT_OF_MEASUREMENT_ALL.map((type) => {
         return { label: this.$tc(`types.unitOfMeasurementType.${type}.short`), value: type }
       }),
@@ -312,12 +301,6 @@ export default {
   computed: {
     ...mapGetters('company', ['company', 'companyId', 'companyUnitOfMeasurement']),
     ...mapGetters('measurementSettings', ['getMeasurementSettings']),
-    filterGarmentTypes () {
-      return [
-        { label: this.$t('measurementSettings.garmentTypeFilter.all'), value: '' },
-        ...this.garmentTypes
-      ]
-    },
     unitOfMeasurement: {
       get () {
         return this.companyUnitOfMeasurement
@@ -345,12 +328,16 @@ export default {
     createMeasurementTypeCanHaveMultipleGarments () {
       return canMeasurementTypeHaveMultipleGarments(this.measurementSettingToCreate.data.type)
     },
-    measurementSettingToCreateSingleGarment: {
+    measurementSettingToCreateGarments: {
       get () {
-        return this.measurementSettingToCreate.data.garments[0]
+        return this.createMeasurementTypeCanHaveMultipleGarments
+          ? this.measurementSettingToCreate.data.garments
+          : this.measurementSettingToCreate.data.garments[0]
       },
       set (newValue) {
-        this.measurementSettingToCreate.data.garments = [newValue]
+        this.measurementSettingToCreate.data.garments = this.createMeasurementTypeCanHaveMultipleGarments
+          ? newValue
+          : [newValue]
       }
     },
     measurementSettingToCreateMinimumValue () {

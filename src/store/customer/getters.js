@@ -17,7 +17,7 @@ export const getCustomerBodyMeasurementProfile = (state) => state.loaded && stat
   : null
 
 export const getCustomerMeasurementProfile = (state) => (id) => state.loaded && state.customer.data.measurement_profiles.length
-  ? state.customer.data.measurement_profiles.reduce((l, r) => l.data.id === id ? l : r)
+  ? state.customer.data.measurement_profiles.reduce((l, r) => r.data.id === id ? r : l, null)
   : null
 
 export const getCustomerMeasurementProfilesByGarment = (state) => (garment) => state.loaded && state.customer.data.measurement_profiles.length
@@ -28,7 +28,7 @@ export const getCustomerMeasurementProfilesByGarment = (state) => (garment) => s
 export const getMeasurementProfileId = (state) => (profile) => profile.data.id
 export const getMeasurementProfileGarment = (state) => (profile) => profile.data.garment
 export const getMeasurementProfileType = (state) => (profile) => profile.data.type
-export const getCurrentMeasurementValue = (state, getters) => (profileId, settingId) => {
+export const getCurrentMeasurement = (state, getters) => (profileId, settingId) => {
   if (!state.loaded) {
     return null
   }
@@ -38,10 +38,18 @@ export const getCurrentMeasurementValue = (state, getters) => (profileId, settin
   }
 
   return profile.data.current_measurements[settingId] !== undefined
-    ? profile.data.current_measurements[settingId].data.value
+    ? profile.data.current_measurements[settingId]
     : null
 }
+export const getCurrentMeasurementValue = (state, getters) => (profileId, settingId) => {
+  let measurement = getters['getCurrentMeasurement'](profileId, settingId)
+  return measurement ? measurement.data.value : null
+}
 export const getCurrentMeasurementComment = (state, getters) => (profileId, settingId) => {
+  let measurement = getters['getCurrentMeasurement'](profileId, settingId)
+  return measurement ? measurement.data.comment : null
+}
+export const getCurrentProfileName = (state, getters) => (profileId) => {
   if (!state.loaded) {
     return null
   }
@@ -50,9 +58,18 @@ export const getCurrentMeasurementComment = (state, getters) => (profileId, sett
     return null
   }
 
-  if (profile.data.current_measurements[settingId] !== undefined) {
-    return profile.data.current_measurements[settingId].data.comment
+  return profile.data.current_name || null
+}
+export const getCurrentProfileSampleGarmentId = (state, getters) => (profileId) => {
+  if (!state.loaded) {
+    return null
   }
+  let profile = getters['getCustomerMeasurementProfile'](profileId)
+  if (!profile) {
+    return null
+  }
+
+  return profile.data.current_sample_garment ? profile.data.current_sample_garment.data.id : null
 }
 
 export const measurementProfileHasCommits = (state) => (profile) => profile.data.commits.length > 0

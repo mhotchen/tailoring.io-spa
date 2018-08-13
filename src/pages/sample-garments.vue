@@ -8,7 +8,7 @@
       <q-card-main>
         <div class="row">
           <q-table
-            :data="garments"
+            :data="getSampleGarments"
             :columns="columns"
             :visible-columns="columns.filter(col => col.visible === true).map(col => col.name)"
             row-key="id"
@@ -24,10 +24,9 @@
                 class="float-right"
                 :label="$t('sampleGarments.garmentTypeFilter.label')"
               >
-                <q-select
-                  color="secondary"
+                <app-garment-select
                   v-model="filterGarmentType"
-                  :options="filterGarmentTypes"
+                  allow-clear
                 />
               </q-field>
               <q-btn
@@ -62,10 +61,7 @@
                   :error="hasErrors('data.garment', $v.sampleGarmentToCreate.data.garment.$error)"
                   :error-label="errorLabel('data.garment')"
                 >
-                  <q-select
-                    v-model="sampleGarmentToCreate.data.garment"
-                    :options="garmentTypes"
-                  />
+                  <app-garment-select v-model="sampleGarmentToCreate.data.garment" />
                 </q-field>
               </q-td>
               <q-td name="actions">
@@ -109,10 +105,13 @@
 <script>
 import { extend, uid } from 'quasar'
 import { required, maxLength } from 'vuelidate/lib/validators'
-import { mapGetters } from 'vuex'
-import { GARMENT_TYPE_ALL } from '../types/garmentType'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+import AppGarmentSelect from '../components/AppGarmentSelect'
 
 export default {
+  components: {
+    'app-garment-select': AppGarmentSelect
+  },
   data () {
     return {
       sampleGarmentToDelete: null,
@@ -120,9 +119,6 @@ export default {
       sampleGarmentToCreate: null,
       confirmedDelete: false,
       filterGarmentType: '',
-      garmentTypes: GARMENT_TYPE_ALL.map((type) => {
-        return { label: this.$t(`types.garmentType.${type}.short`), value: type }
-      }),
       columns: [
         {
           name: 'id',
@@ -182,20 +178,17 @@ export default {
   },
   computed: {
     ...mapGetters('company', ['companyId']),
-    filterGarmentTypes () {
-      return [
-        { label: this.$t('sampleGarments.garmentTypeFilter.all'), value: '' },
-        ...this.garmentTypes
-      ]
-    }
+    ...mapGetters('sampleGarments', ['getSampleGarments', 'getSampleGarmentsByGarment'])
   },
   methods: {
+    ...mapActions('sampleGarments', ['loadSampleGarment', 'loadSampleGarments']),
+    ...mapMutations('sampleGarments', ['removeSampleGarment']),
     filterGarments (rows, terms, cols, cellValue) {
-      return rows.filter((row) => terms === '' || row.data.garment === terms)
+      return terms === '' ? this.getSampleGarments : this.getSampleGarmentsByGarment(terms)
     },
     async load () {
       try {
-        this.garments = (await this.$axios.get(`/companies/${this.companyId}/sample-garments`)).data.data
+        await this.loadSampleGarments(this.$axios.get(`/companies/${this.companyId}/sample-garments`))
       } catch (error) {
         if (!('response' in error)) {
           throw error
@@ -236,9 +229,8 @@ export default {
       }
 
       try {
-        this.garments.unshift(
-          (await this.$axios.post(`/companies/${this.companyId}/sample-garments`, this.sampleGarmentToCreate))
-            .data
+        await this.loadSampleGarment(
+          this.$axios.post(`/companies/${this.companyId}/sample-garments`, this.sampleGarmentToCreate)
         )
         this.cancelCreatingSampleGarment()
       } catch (error) {
@@ -262,14 +254,11 @@ export default {
     },
     async saveEditingSampleGarment () {
       try {
-        await this.$axios.put(
-          `/companies/${this.companyId}/sample-garments/${this.sampleGarmentToEdit.data.id}`,
-          this.sampleGarmentToEdit
-        )
-
-        // Update in place to save an AJAX request
-        this.garments = this.garments.map(setting =>
-          setting.data.id === this.sampleGarmentToEdit.data.id ? this.sampleGarmentToEdit : setting
+        await this.loadSampleGarment(
+          this.$axios.put(
+            `/companies/${this.companyId}/sample-garments/${this.sampleGarmentToEdit.data.id}`,
+            this.sampleGarmentToEdit
+          )
         )
       } catch (error) {
         this.$q.notify(this.$t('sampleGarments.edit.error'))
@@ -300,9 +289,7 @@ export default {
     async deleteSampleGarment () {
       try {
         await this.$axios.delete(`/companies/${this.companyId}/sample-garments/${this.sampleGarmentToDelete.data.id}`)
-
-        // Remove from the garments instead of reloading them to save an AJAX request.
-        this.garments = this.garments.filter(setting => setting.data.id !== this.sampleGarmentToDelete.data.id)
+        this.removeSampleGarment(this.sampleGarmentToDelete.data.id)
       } catch (error) {
         this.$q.notify(this.$t('sampleGarments.delete.error'))
       } finally {

@@ -68,3 +68,11 @@ export function getMeasurementTypeMaximumValue (measurementType) {
       return 200 * CENTIMETER_TO_MICROMETER
   }
 }
+
+/**
+ * @param {string} measurementType   One of the constants in this file
+ * @returns {boolean}
+ */
+export function isMeasurementTypeSampleAdjustment (measurementType) {
+  return measurementType === MEASUREMENT_TYPE_SAMPLE_ADJUSTMENT
+}

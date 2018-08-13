@@ -114,9 +114,10 @@ export default {
         body: 'Body',
         garments: 'Garments',
         noMeasurements: 'No measurements yet!',
-        addNew: 'Add measurements',
-        edit: 'Edit measurements',
-        view: 'View measurements'
+        measure: 'Measure',
+        new: 'Create new measurement profile',
+        alter: 'Alter',
+        view: 'View'
       }
     },
     edit: {
@@ -144,6 +145,10 @@ export default {
         commitMessage: {
           label: 'Change message',
           helper: 'An optional description of the changes (eg. why or how) that can be viewed on the customer\'s profile'
+        },
+        sampleGarment: {
+          label: 'Sample garment',
+          none: 'None'
         },
         save: {
           label: 'Save changes'

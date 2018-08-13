@@ -5,7 +5,7 @@ export const setMeasurementSettings = (state, payload) => {
 
 export const createOrReplaceMeasurementSetting = (state, payload) => {
   let found = false
-  state.settings = state.settings.map((setting) => {
+  state.settings = state.settings.map(setting => {
     if (setting.data.id === payload.data.id) {
       found = true
       return payload
@@ -20,5 +20,5 @@ export const createOrReplaceMeasurementSetting = (state, payload) => {
 }
 
 export const removeMeasurementSetting = (state, payload) => {
-  state.settings = state.settings.filter((setting) => setting.data.id !== payload)
+  state.settings = state.settings.filter(setting => setting.data.id !== payload)
 }

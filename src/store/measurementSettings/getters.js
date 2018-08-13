@@ -6,10 +6,7 @@ export const getMeasurementSettingsByType = (state) => (type) => state.loaded
   ? state.settings.filter(s => s.data.type === type)
   : []
 export const getMeasurementSettingsByGarment = (state) => (garment) => state.loaded
-  ? state.settings.filter(s => s.data.garments.contains(garment))
-  : []
-export const getMeasurementSettingsByTypeAndGarment = (state) => (type, garment) => state.loaded
-  ? state.settings.filter(s => s.data.type === type && s.data.garments.contains(garment))
+  ? state.settings.filter(s => s.data.garments.includes(garment))
   : []
 
 export const getMeasurementSettingId = (state) => (setting) => setting.data.id

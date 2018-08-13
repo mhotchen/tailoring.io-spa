@@ -68,6 +68,7 @@ module.exports = function (ctx) {
         'QInnerLoading',
         'QItem',
         'QItemMain',
+        'QItemSeparator',
         'QItemSide',
         'QItemTile',
         'QLayout',
